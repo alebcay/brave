@@ -12,8 +12,9 @@ services:
       - "5000:5000"
 
     # Mount archives
-#    volumes:
-#      - /srv/archives:/videos
+    volumes:
+      - /srv/brave/videos:/videos
+      - /srv/brave/config:/src/config
 
     environment:
       - GST_DEBUG=3

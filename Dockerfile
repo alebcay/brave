@@ -47,4 +47,4 @@ RUN pipenv install && \
 
 EXPOSE 5000
 
-CMD ["pipenv", "run", "/src/brave.py"]
+CMD ["pipenv", "run", "/src/brave.py", "-c", "/config/config.yaml"]
