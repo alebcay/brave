@@ -298,12 +298,12 @@ function formGroup (details) {
     e.append(input);
 
     if ( details['data-slider-value'] ) {
-      input.classList = ['custom-range'];
+      input.get().classList = ['custom-range'];
       let msg = $('<span></span>');
       const showPercent = event => {
-        const val = event.target.value;
+        const val = event.value || event.target.value;
         msg.text(`${val}%`);
-        event.target.setAttribute('data-slider-value', val );
+        input.setAttribute('data-slider-value', val );
       };
       showPercent({value: details['data-slider-value']});
       input.on( 'input', showPercent );
