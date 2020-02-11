@@ -30,14 +30,21 @@ RUN apt-get update && \
     python3-psutil \
     python3-uvloop
 
-ARG BRAVE_REPO=bitwave-tv
+RUN pip3 install pipenv sanic
 
-RUN git clone --depth 1 https://github.com/${BRAVE_REPO}/brave.git && \
-    cd brave && \
-    pip3 install pipenv sanic && \
-    pipenv install && \
+COPY . /src
+WORKDIR /src
+
+RUN pipenv install && \
     mkdir -p /usr/local/share/brave/output_images/
 
+#ARG BRAVE_REPO=bitwave-tv
+#RUN git clone --depth 1 https://github.com/${BRAVE_REPO}/brave.git && \
+#    cd brave && \
+#    pip3 install pipenv sanic && \
+#    pipenv install && \
+#    mkdir -p /usr/local/share/brave/output_images/
+
 EXPOSE 5000
-WORKDIR /brave
-CMD ["pipenv", "run", "/brave/brave.py"]
+
+CMD ["pipenv", "run", "/src/brave.py"]
