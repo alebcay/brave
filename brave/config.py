@@ -23,7 +23,7 @@ def init(filename=DEFAULT_CONFIG_FILENAME):
                 if c is None:
                     c = {}
         except FileNotFoundError as e:
-            print( 'FATAL! Unable to load default configuration!' )
+            print( 'FATAL! Unable to load default configuration! File: "%s": %s' % (filename, e) )
             exit(1)
 
     _validate()
