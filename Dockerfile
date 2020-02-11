@@ -7,7 +7,7 @@ RUN apt-get update && \
     apt-get install -yq \
     build-essential \
     gcc \
-    git \ 
+    git \
     libffi6 libffi-dev \
     gobject-introspection \
     gstreamer1.0-libav \
@@ -17,7 +17,7 @@ RUN apt-get update && \
     gstreamer1.0-plugins-bad \
     gstreamer1.0-plugins-ugly \
     gstreamer1.0-tools \
-    gir1.2-gst-plugins-bad-1.0 \ 
+    gir1.2-gst-plugins-bad-1.0 \
     libcairo2-dev \
     libgirepository1.0-dev \
     pkg-config \
@@ -30,7 +30,9 @@ RUN apt-get update && \
     python3-psutil \
     python3-uvloop
 
-RUN git clone --depth 1 https://github.com/DoxIsMightier/brave.git && \
+ARG BRAVE_REPO=bitwave-tv
+
+RUN git clone --depth 1 https://github.com/${BRAVE_REPO}/brave.git && \
     cd brave && \
     pip3 install pipenv sanic && \
     pipenv install && \
