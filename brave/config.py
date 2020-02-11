@@ -23,9 +23,9 @@ def init(filename=DEFAULT_CONFIG_FILENAME):
                 c = yaml.load(stream, Loader=yaml.FullLoader)
                 if c is None:
                     c = {}
-            except FileNotFoundError as e:
-                print( 'FATAL! Unable to load default configuration!' )
-                exit(1)
+        except FileNotFoundError as e:
+            print( 'FATAL! Unable to load default configuration!' )
+            exit(1)
 
     _validate()
 
