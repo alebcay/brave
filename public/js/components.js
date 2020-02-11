@@ -114,7 +114,7 @@ components.volumeInput = (volume) => {
         id: 'input-volume',
         label: 'Volume',
         name: 'volume',
-        type: 'text',
+        type: 'range',
         'data-slider-min': 0,
         'data-slider-max': 100,
         'data-slider-step': 10,
