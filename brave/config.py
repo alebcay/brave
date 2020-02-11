@@ -13,8 +13,19 @@ def init(filename=DEFAULT_CONFIG_FILENAME):
             if c is None:
                 c = {}
     except FileNotFoundError as e:
-        print('Unable to open config file "%s": %s' % (filename, e))
-        exit(1)
+        print( 'Unable to open config file "%s": %s' % (filename, e) )
+        # exit(1)
+
+        # attempt to load default configuration if specified configuration fails
+        try:
+            with open(DEFAULT_CONFIG_FILENAME, 'r') as stream:
+                global c
+                c = yaml.load(stream, Loader=yaml.FullLoader)
+                if c is None:
+                    c = {}
+            except FileNotFoundError as e:
+                print( 'FATAL! Unable to load default configuration!' )
+                exit(1)
 
     _validate()
 
