@@ -327,9 +327,11 @@ function showModal (label, content, onSave) {
   $('#primary-modal .modal-body').html(content);
 
   if (onSave) {
-    const saveButton = $('<button type="button" class="btn btn-success save-button">Save</button>');
+    const saveButton = $('<button type="submit" class="btn btn-sm btn-success save-button">Save</button>');
     saveButton.click(onSave);
-    $('#primary-modal .modal-footer').empty().append(saveButton)
+    $('#primary-modal .modal-footer')
+      .empty()
+      .append(saveButton)
   }
 }
 

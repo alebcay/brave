@@ -94,7 +94,7 @@ inputsHandler._handleNewFormType = function(event) {
 };
 
 inputsHandler._showForm = function(input) {
-  inputsHandler.currentForm = $('<form></form>');
+  inputsHandler.currentForm = $('<form onsubmit="console.log"></form>');
   var label = input && input.hasOwnProperty('id') ? 'Edit input ' + input.id : 'Add input';
   showModal(label, inputsHandler.currentForm, inputsHandler._handleFormSubmit);
   inputsHandler._populateForm(input)
