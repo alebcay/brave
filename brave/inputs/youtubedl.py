@@ -39,9 +39,10 @@ class YoutubeDLInput(Input):
             'uri': {
                 'type': 'str',
             },
-            
+
             'buffer_duration': {
                 'type': 'int',
+                'default': 1000000000
             },
             'loop': {
                 'type': 'bool',
@@ -70,8 +71,7 @@ class YoutubeDLInput(Input):
         # Playbin or playbin3 does all the hard work.
         # Playbin3 works better for continuous playback.
         # But it does not handle RTMP inputs as well.
-        # See http://gstreamer-devel.966125.n4.nabble.com/Behavior-differences-between-
-        #   decodebin3-and-decodebin-and-vtdec-hw-not-working-on-OSX-td4680895.html
+        # See: http://gstreamer-devel.966125.n4.nabble.com/Behavior-differences-between-decodebin3-and-decodebin-and-vtdec-hw-not-working-on-OSX-td4680895.html
         # should do a check of the url by passing it through the stream link script
         # https://github.com/ytdl-org/youtube-dl/blob/master/README.md#embedding-youtube-dl
         self.suri = ''
@@ -81,7 +81,7 @@ class YoutubeDLInput(Input):
                 'noplaylist' : True,
                 'forceurl' : True,
                 'logger': MyLogger(),
-                
+
             }
             with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                 ydl.download([self.uri])
@@ -89,7 +89,7 @@ class YoutubeDLInput(Input):
                 meta = ydl.extract_info(self.uri,download=False)
                 channel_val = meta['uploader']
                 self.channel = channel_val
-                # should then try to get the meta data out that we want like channel and description 
+                # should then try to get the meta data out that we want like channel and description
                 #self.playbin.set_property('channel', 'test channel')
 
 
@@ -100,7 +100,7 @@ class YoutubeDLInput(Input):
             self.suri = purl
         except:
             pass
-        
+
         is_rtmp = self.suri.startswith('rtmp')
         playbin_element = 'playbin' if is_rtmp else 'playbin'
         self.create_pipeline_from_string(playbin_element)
@@ -234,7 +234,7 @@ class YoutubeDLInput(Input):
         '''
         s = super().summarise(for_config_file)
         global channel_val
-        
+
         if not for_config_file:
             #s['channel'] = channel_val
             buffering_stats = self.get_buffering_stats()

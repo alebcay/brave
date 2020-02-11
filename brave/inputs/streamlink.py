@@ -18,9 +18,10 @@ class StreamlinkInput(Input):
             'uri': {
                 'type': 'str',
             },
-            
+
             'buffer_duration': {
                 'type': 'int',
+                'default': 1000000000
             },
             'loop': {
                 'type': 'bool',
@@ -45,8 +46,7 @@ class StreamlinkInput(Input):
         # Playbin or playbin3 does all the hard work.
         # Playbin3 works better for continuous playback.
         # But it does not handle RTMP inputs as well.
-        # See http://gstreamer-devel.966125.n4.nabble.com/Behavior-differences-between-
-        #   decodebin3-and-decodebin-and-vtdec-hw-not-working-on-OSX-td4680895.html
+        # See: http://gstreamer-devel.966125.n4.nabble.com/Behavior-differences-between-decodebin3-and-decodebin-and-vtdec-hw-not-working-on-OSX-td4680895.html
         # should do a check of the url by passing it through the stream link script
         self.suri = ''
         try:
@@ -56,7 +56,7 @@ class StreamlinkInput(Input):
             self.suri = tstream.url
         except:
             pass
-        
+
         is_rtmp = self.suri.startswith('rtmp')
         playbin_element = 'playbin' if is_rtmp else 'playbin'
         self.create_pipeline_from_string(playbin_element)
