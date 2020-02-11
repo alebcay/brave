@@ -1,78 +1,117 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/4.0.0/slate/bootstrap.min.css" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.2.1/css/bootstrap-slider.min.css" crossorigin="anonymous">
-        <link rel="stylesheet" href="style.css">
-        <link rel="icon" href="data:,">
-        <title>Brave</title>
-    </head>
-    <body>
-    <header>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/slate/bootstrap.min.css" integrity="sha384-G9YbB4o4U6WS4wCthMOpAeweY4gQJyyx0P3nZbEBHyz+AtNoeasfRChmek1C2iqV" crossorigin="anonymous">    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.2.1/css/bootstrap-slider.min.css" crossorigin="anonymous">-->
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:,">
+    <title>BRAVE - [bitwave.tv]</title>
+</head>
 
-<nav class="container-fluid">
-  <div class="row justify-content-between">
-    <div class="col-sm-4">
-        <h1>BRAVE</h1>
-        <span class="btn-group">
-          <button type="button" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-plus"></i> Add
-          </button>
-          <div class="dropdown-menu">
-            <a class="dropdown-item" href="#" id="new-input-button">Input</a>
-            <a class="dropdown-item" href="#" id="new-mixer-button">Mixer</a>
-            <a class="dropdown-item" href="#" id="new-output-button">Output</a>
-            <a class="dropdown-item" href="#" id="new-overlay-button">Overlay</a>
-          </div>
-        </span>
-        <span class="btn-group">
-          <button type="button" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-plus"></i> Special
-          </button>
-          <div class="dropdown-menu">
-            <a class="dropdown-item" href="#" id="rebuild-mixer-and-output">RebuildMixerAndOutput</a>
-            
-            <a class="dropdown-item" href="#" id="add-time-overlay">Add LocalTime</a>
-            <a class="dropdown-item" href="#" id="all-stop">Stop</a>
-          </div>
-        </span>
-        <span class="btn-group">
-          <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-cog"></i> Options
-          </button>
-          <div class="dropdown-menu">
-            <a class="dropdown-item" href="#" id="restart-brave-button">Restart Brave</a>
-            <a class="dropdown-item" href="api/config/current.yaml">Download current config</a>
-            <a class="dropdown-item" href="#" id="refresh-page-button">Refresh page</a>
-            <a class="dropdown-item" target="_blank" href="elements_table">Debug view (GStreamer elements)</a>
-          </div>
-        </span>
-        <span class="btn-group">
-          <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-plus"></i> Quick add
-          </button>
-          <input type="text" id="quickaddrebox">
-          <div class="dropdown-menu">
-            <a class="dropdown-item" href="#" id="qa-youtubedl">QA youtubedl</a>
-            <a class="dropdown-item" href="#" id="qa-streamlink">QA Streamlink</a>
-            <a class="dropdown-item" href="#" id="qa-text">QA text</a>
-            
-          </div>
-        </span>
+<body>
+
+<header>
+    <nav class="navbar navbar-dark bg-primary container-fluid">
+        <div class="row flex-grow-1 justify-content-between align-items-center">
+
+            <!-- Navbar branding -->
+            <h1 class="navbar-brand mb-0">BRAVE</h1>
+
+            <!-- Controls -->
+            <div class="col-auto">
+                <div class="btn-group" role="group">
+
+                    <!-- Add pipeline -->
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-sm btn-info" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Add <i class="fas fa-sm fa-plus"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#" id="new-input-button">Input</a>
+                            <a class="dropdown-item" href="#" id="new-mixer-button">Mixer</a>
+                            <a class="dropdown-item" href="#" id="new-output-button">Output</a>
+                            <a class="dropdown-item" href="#" id="new-overlay-button">Overlay</a>
+                        </div>
+                    </div>
+
+                    <!-- Add special -->
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-sm btn-info" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Extra <i class="fas fa-sm fa-caret-down"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#" id="rebuild-mixer-and-output">Rebuild Mixer & Output</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#" id="add-time-overlay">LocalTime</a>
+                            <a class="dropdown-item" href="#" id="all-stop">Stop</a>
+                        </div>
+                    </div>
+
+                    <!-- Options -->
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-sm btn-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#" id="restart-brave-button">Restart Brave</a>
+                            <a class="dropdown-item" href="api/config/current.yaml">Download current config</a>
+                            <a class="dropdown-item" href="#" id="refresh-page-button">Refresh page</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" target="_blank" href="elements_table">Debug view (GStreamer elements)</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Preview -->
+            <div class="col text-center">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-tv mr-1"></i>
+                        <span id="preview-button-msg">No preview</span>
+                    </button>
+                    <div class="dropdown-menu" id="preview-bar-dropdown"></div>
+                </div>
+                <span id="mute-span"></span>
+            </div>
+
+            <!-- CPU Usage -->
+            <div class="text-right" id="cpu-stats"></div>
+        </div>
+    </nav>
+</header>
+
+<main class="container-fluid">
+
+    <div class="mt-4">
+        <div class="row justify-content-between">
+            <div class="col">
+                <!-- Quick Add -->
+                <div class="input-group">
+                    <input type="text" id="quickaddrebox">
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-sm btn-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Quick add <i class="fas fa-sm fa-plus"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#" id="qa-youtubedl">youtube-dl</a>
+                            <a class="dropdown-item" href="#" id="qa-streamlink">streamlink</a>
+                            <div role="separator" class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#" id="qa-text">Text Overlay</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="col-sm-4" style="text-align: center">
-        <span class="btn-group">
-            <button type="button" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-tv"></i>&nbsp;&nbsp; <span id="preview-button-msg">No preview</span>
-            </button>
-            <div class="dropdown-menu" id="preview-bar-dropdown"></div>
-        </span>
-        <span id="mute-span"></span>
-    </div>
-    <div class="col-sm-4 align-self-right" id="cpu-stats">
+
+    <div id="preview-bar"></div>
+
+    <div class="container-fluid">
+        <div class="row" id="cards"></div>
     </div>
   </div>
 </nav>
@@ -101,27 +140,31 @@
             </div>
           </div>
         </div>
+    </div>
 
-        <div id="top-message" class="alert alert-warning alert-dismissible fade show" role="alert" style="z-index: 1000">
-          <div></div>
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
+    <div id="top-message" class="alert alert-warning alert-dismissible fade show" role="alert" style="z-index: 1000">
+        <div></div>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true"><i class="fas fa-times"></i></span>
+        </button>
+    </div>
+</main>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.2.1/bootstrap-slider.min.js"></script>
-        <script src="js/components.js"></script>
-        <script src="js/index.js"></script>
-        <script src="js/inputs.js"></script>
-        <script src="js/outputs.js"></script>
-        <script src="js/overlays.js"></script>
-        <script src="js/mixers.js"></script>
-        <script src="js/websocket.js"></script>
-        <script src="js/webrtc.js"></script>
-        <script src="js/preview.js"></script>
-    </main>
-    </body>
+<!-- Bootstrap dependencies -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.2.1/bootstrap-slider.min.js"></script>-->
+
+<!-- Javascript components -->
+<script src="js/components.js"></script>
+<script src="js/index.js"></script>
+<script src="js/inputs.js"></script>
+<script src="js/outputs.js"></script>
+<script src="js/overlays.js"></script>
+<script src="js/mixers.js"></script>
+<script src="js/websocket.js"></script>
+<script src="js/webrtc.js"></script>
+<script src="js/preview.js"></script>
+
+</body>
 </html>

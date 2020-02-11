@@ -202,24 +202,7 @@ body {
     color: #999;
 }
 
-nav {
-    padding: 6px;
-    background-color: #888;
-}
-
-nav h1 {
-    font-size: 1.7em;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    vertical-align: middle;
-    padding: 0;
-    margin: 0 16px 0 4px;
-    color: silver;
-    display: inline;
-}
-
 #cpu-stats {
-    text-align: right;
     color: #ddd;
     vertical-align: middle;
     padding: 4px 8px 4px 4px;
