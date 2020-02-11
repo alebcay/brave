@@ -1,0 +1,28 @@
+version: '3'
+
+# Microservices
+services:
+
+  # API Server Configuration
+  api-server:
+    container_name: bitwave-brave
+    image: bitwavetv/brave:latest
+
+    ports:
+      - "5000:5000"
+
+    # Mount archives
+#    volumes:
+#      - /srv/archives:/videos
+
+    environment:
+      - GST_DEBUG=3
+      - LOG_LEVEL=debug
+      - FORCE_COLOR=1
+
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
+        window: 10s
