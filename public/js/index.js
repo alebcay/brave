@@ -294,11 +294,11 @@ function formGroup (details) {
         fields.forEach(f => input.attr(f, details[f]));
         e.append(input);
         if (details['data-slider-value']) {
-            input.slider();
+            // input.slider();
             let msg = $('<span></span>');
-            let showPerc = (event) => msg.text(event.value + '%');
+            let showPerc = (event) => msg.text(`${event.value}%`);
             showPerc({value: details['data-slider-value']});
-            input.on("slide", showPerc);
+            input.on( 'input', showPerc );
             e.append(msg)
         }
     }
