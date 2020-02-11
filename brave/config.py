@@ -6,9 +6,9 @@ c = {}
 
 
 def init(filename=DEFAULT_CONFIG_FILENAME):
+    global c
     try:
         with open(filename, 'r') as stream:
-            global c
             c = yaml.load(stream, Loader=yaml.FullLoader)
             if c is None:
                 c = {}
@@ -19,7 +19,6 @@ def init(filename=DEFAULT_CONFIG_FILENAME):
         # attempt to load default configuration if specified configuration fails
         try:
             with open(DEFAULT_CONFIG_FILENAME, 'r') as stream:
-                global c
                 c = yaml.load(stream, Loader=yaml.FullLoader)
                 if c is None:
                     c = {}
