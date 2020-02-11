@@ -54,11 +54,11 @@ def enable_video():
 
 
 def default_mixer_width():
-    return c['default_mixer_width'] if 'default_mixer_width' in c else 640
+    return c['default_mixer_width'] if 'default_mixer_width' in c else 1280
 
 
 def default_mixer_height():
-    return c['default_mixer_height'] if 'default_mixer_height' in c else 360
+    return c['default_mixer_height'] if 'default_mixer_height' in c else 720
 
 
 def inputs():
