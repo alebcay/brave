@@ -125,13 +125,13 @@ const toastTemplate = ( title, message ) => `
 const createToast = ( title, message, type ) => {
   const toast = $($.parseHTML( toastTemplate( title, message ) ) );
   toast.find('.toast').addClass(`bg-${type}`);
-  toastHolder.append( toast );
-  toast.toast( 'show' );
+  const newToast = toast.appendTo( toastHolder );
+  newToast.toast( 'show' );
   setTimeout( () => {
-    toast.toast('dispose');
-    toast.remove();
+    newToast.toast('dispose');
+    newToast.remove();
   }, 5000 );
-  return toast;
+  return newToast;
 };
 
 function showMessage ( m, level ) {
