@@ -111,7 +111,6 @@ const toastHolder = $('#toast-holder');
 const toastTemplate = ( title, message ) => `
 <div class="toast text-white" role="alert" aria-live="assertive" aria-atomic="true">
   <div class="toast-header">
-    <img src="..." class="rounded mr-2" alt="...">
     <strong class="mr-auto">${title}</strong>
     <small class="text-muted">Just now</small>
     <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
@@ -124,7 +123,7 @@ const toastTemplate = ( title, message ) => `
 
 const createToast = ( title, message, type ) => {
   const toast = $($.parseHTML( toastTemplate( title, message ) ) );
-  toast.find('.toast').addClass(`bg-${type}`);
+  toast.addClass(`bg-${type}`);
   const newToast = toast.appendTo( toastHolder );
   newToast.toast( 'show' );
   setTimeout( () => {
