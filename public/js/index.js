@@ -104,21 +104,47 @@ function drawAllItems () {
   outputsHandler.draw()
 }
 
-var topMessageInterval;
-function showMessage (m, level) {
+$('.toast').toast();
+
+const toastHolder = $('#toast-holder');
+
+const toastTemplate = ( title, message ) => `
+<div class="toast text-white" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="toast-header">
+    <img src="..." class="rounded mr-2" alt="...">
+    <strong class="mr-auto">${title}</strong>
+    <small class="text-muted">Just now</small>
+    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="toast-body">${message}</div>
+</div>
+`;
+
+const createToast = ( title, message, type ) => {
+  const toast = $($.parseHTML( toastTemplate( title, message ) ) );
+  toast.find('.toast').addClass(`bg-${type}`);
+  toastHolder.append( toast );
+  toast.toast( 'show' );
+  setTimeout( () => {
+    toast.toast('dispose');
+    toast.remove();
+  }, 5000 );
+  return toast;
+};
+
+function showMessage ( m, level ) {
   const VALID_LEVELS = ['warning', 'success', 'danger', 'info'];
-  if (!level || VALID_LEVELS.indexOf(level) === -1) level = 'warning';
-  console.debug('Showing this top', level, ' message:', m);
-  $("#top-message").show();
-  $("#top-message div").text(m);
-  $("#top-message").removeClass('alert-warning alert-success alert-danger alert-info');
-  $("#top-message").addClass('alert-' + level);
-  if (topMessageInterval) clearInterval(topMessageInterval);
-  topMessageInterval = setInterval(hideMessage, 8000);
+  if ( !level || VALID_LEVELS.indexOf(level ) === -1 ) level = 'warning';
+
+  console.debug('Showing toast', level, ' message:', m);
+
+  const toast = createToast( level, m, level );
 }
 
 function hideMessage () {
-  $("#top-message").fadeOut(200);
+  $('.toast').dispose();
 }
 
 function getSelect(name, currentlySelectedKey, msg, options, alwaysShowUnselectedOption) {
@@ -287,8 +313,8 @@ function formGroup (details) {
   else if ( details.type === 'range' ) {
     const input = $(document.createElement('input'));
     const msg   = $('<span></span>');
-    msg.addClass( 'text-info' );
 
+    msg.addClass( 'text-info' );
     input.addClass( 'custom-range' );
 
     const fields = [
@@ -325,12 +351,10 @@ function formGroup (details) {
     e.append(input);
 
     if ( details['data-slider-value'] ) {
-      console.log( 'data-slider-value called!' );
       const msg = $('<span></span>');
       const showPercent = event => {
         const val = event.value || event.target.value;
         msg.text(`${val}%`);
-        // input.setAttribute('data-slider-value', val );
       };
       showPercent({value: details['data-slider-value']});
       input.on( 'input', showPercent );
@@ -418,14 +442,14 @@ function showNoItemsMessage() {
 }
 
 function submitCreateOrEdit ( blockType, id, values ) {
-  const isUpdate = (id !== null && id !== undefined);
+  const isUpdate = ( id !== null && id !== undefined );
   const type = isUpdate ? 'POST' : 'PUT';
   const url = `api/${blockType}s` + (isUpdate ? `/${id}` : '');
   $.ajax({
     contentType: 'application/json',
     type, url,
     dataType: 'json',
-    data: JSON.stringify(values),
+    data: JSON.stringify( values ),
     success: response => {
       const msg = isUpdate ?
         `Successfully updated ${blockType} ${id}` :

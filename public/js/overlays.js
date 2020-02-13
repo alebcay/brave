@@ -143,7 +143,7 @@ overlaysHandler._populateForm = function(overlay) {
   const fontsize = formGroup({
     id: 'input-fontsize',
     label: 'Font Size',
-    name: 'fontsize',
+    name: 'font_size',
     type: 'number',
     value: overlay.font_size,
     help: 'Size of overlay text',
@@ -170,7 +170,7 @@ overlaysHandler._populateForm = function(overlay) {
   const textOutline = formGroup({
     id: 'input-text-bg',
     type: 'checkbox',
-    name: 'shaded-background',
+    name: 'outline',
     label: 'Add a outline to text overlay',
     value: overlay.outline,
   });
@@ -178,7 +178,7 @@ overlaysHandler._populateForm = function(overlay) {
   const textShadow = formGroup({
     id: 'input-text-bg',
     type: 'checkbox',
-    name: 'shaded-background',
+    name: 'shadow',
     label: 'Add a shadow to text overlay',
     value: overlay.shadow,
   });
@@ -186,7 +186,7 @@ overlaysHandler._populateForm = function(overlay) {
   const shadedBackground = formGroup({
     id: 'input-text-bg',
     type: 'checkbox',
-    name: 'shaded-background',
+    name: 'shaded_background',
     label: 'Add a background to text overlay',
     value: overlay.shaded_background,
   });

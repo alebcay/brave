@@ -3,8 +3,8 @@ version: '3'
 # Microservices
 services:
 
-  # API Server Configuration
-  api-server:
+  # Brave Server Configuration
+  BRAVE:
     container_name: bitwave-brave
     image: bitwavetv/brave:latest
 
@@ -13,8 +13,8 @@ services:
 
     # Mount archives
     volumes:
-      - /srv/brave/videos:/videos
-      - /srv/brave/config:/config
+      - ./config:/config
+      #- /srv/brave/videos:/videos
 
     environment:
       - PORT=5000
