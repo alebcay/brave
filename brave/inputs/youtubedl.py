@@ -1,7 +1,7 @@
 from brave.inputs.input import Input
 from gi.repository import Gst
 import brave.config as config
-#import streamlink
+import brave.exceptions
 #from __future__ import unicode_literals
 import youtube_dl
 
@@ -21,19 +21,19 @@ class MyLogger(object):
         pass
 
     def warning(self, msg):
-#        print(msg)
+        #print(msg)
         pass
 
     def error(self, msg):
         print(msg)
 
-class YoutubeDLInput(Input):
+class YoutubeDLInput( Input ):
     '''
     Handles input via URI.
     This can be anything Playbin accepts, including local files and remote streams.
     '''
 
-    def permitted_props(self):
+    def permitted_props( self ):
         return {
             **super().permitted_props(),
             'uri': {
@@ -42,29 +42,48 @@ class YoutubeDLInput(Input):
 
             'buffer_duration': {
                 'type': 'int',
-                'default': 1000000000
+                'default': 1000000000,
             },
             'loop': {
                 'type': 'bool',
-                'default': False
+                'default': False,
             },
             'position': {
                 'type': 'int'
             },
             'volume': {
                 'type': 'float',
-                'default': 1.0
+                'default': 1.0,
             },
             'width': {
-                'type': 'int'
+                'type': 'int',
             },
             'height': {
-                'type': 'int'
+                'type': 'int',
+            },
+            'disablevideo': {
+                'type': 'bool',
+                'default': False,
+            },
+
+            'title':{
+                'type': 'str',
+                'default': '',
             },
             'channel':{
                 'type': 'str',
-                'default':'no channel set'
-                }
+                'default': 'no channel set',
+            },
+            'format':{
+                'type': 'str',
+                'default': 'no format set',
+            },
+            'fps': {},
+            'categories': {},
+            'thumbnail': {},
+            'view_count': { 'default': 0 },
+            'format_note': { 'default': 'none' },
+            'protocol': { 'default': 'none' },
         }
 
     def create_elements(self):
@@ -75,37 +94,57 @@ class YoutubeDLInput(Input):
         # should do a check of the url by passing it through the stream link script
         # https://github.com/ytdl-org/youtube-dl/blob/master/README.md#embedding-youtube-dl
         self.suri = ''
-        try:
-            ydl_opts = {
-                'simulate': True,
-                'noplaylist' : True,
-                'forceurl' : True,
-                'logger': MyLogger(),
 
-            }
-            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-                ydl.download([self.uri])
-                global channel_val
-                meta = ydl.extract_info(self.uri,download=False)
-                channel_val = meta['uploader']
-                self.channel = channel_val
-                # should then try to get the meta data out that we want like channel and description
-                #self.playbin.set_property('channel', 'test channel')
+        # Filter for just audio formats when video is disabled
+        ytFormats = 'best[height<=720][fps<=?30][ext=webm]/best[height<=720][fps<=?30][ext=mp4]/best[height<=720][fps<=?30]/best[height<=720]/best'
 
+        ydl_opts = {
+            'format': ytFormats,
+            'simulate': True,
+            'noplaylist' : True,
+            'forceurl' : True,
+            'logger': MyLogger(),
+        }
 
-            #streams = streamlink.streams(self.uri)
-            global purl
-            self.stream = purl
-            #tstream = streams['best']
-            self.suri = purl
-        except:
-            pass
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([self.uri])
+            meta = ydl.extract_info(self.uri, download=False)
 
-        is_rtmp = self.suri.startswith('rtmp')
-        playbin_element = 'playbin' if is_rtmp else 'playbin'
+            global ytdl_url
+            ytdl_url = meta.get( 'url' )
+            self.stream = ytdl_url
+            self.suri = ytdl_url
+
+            global channel_val
+            channel_val = meta.get( 'uploader' )
+            self.channel = channel_val
+
+            self.format      = meta.get( 'format' )
+            self.title       = meta.get( 'title')
+            self.fps         = meta.get( 'fps')
+            self.categories  = meta.get( 'categories')
+            self.thumbnail   = meta.get( 'thumbnail')
+            self.view_count  = meta.get( 'view_count')
+            self.format_note = meta.get( 'format_note')
+            self.protocol    = meta.get( 'protocol')
+
+            # should then try to get the meta data out that we want like channel and description
+            #self.playbin.set_property('channel', 'test channel')
+
+        #global purl
+        #self.stream = purl
+        #self.suri = purl
+
+        # Potentially add back playbin3?
+        #is_rtmp = self.suri.startswith('rtmp')
+        #playbin_element = 'playbin' if is_rtmp else 'playbin'
+
+        playbin_element = 'playbin'
         self.create_pipeline_from_string(playbin_element)
+
         self.playsink = self.pipeline.get_by_name('playsink')
         self.playbin = self.playsink.parent
+
         self.playbin.set_property('uri', self.suri)
         self.playbin.connect('about-to-finish', self.__on_about_to_finish)
 
@@ -128,8 +167,7 @@ class YoutubeDLInput(Input):
         self.playsink.set_property('audio-sink', fakesink)
 
     def create_video_elements(self):
-        bin_as_string = ('videoconvert ! videoscale ! capsfilter name=capsfilter ! '
-                         'queue ! ' + self.default_video_pipeline_string_end())
+        bin_as_string = ( 'videoconvert ! videoscale ! capsfilter name=capsfilter ! queue ! ' + self.default_video_pipeline_string_end() )
         bin = Gst.parse_bin_from_description(bin_as_string, True)
 
         self.capsfilter = bin.get_by_name('capsfilter')
@@ -145,6 +183,9 @@ class YoutubeDLInput(Input):
         self.playsink.set_property('audio-sink', bin)
         self.final_audio_tee = bin.get_by_name('final_audio_tee')
 
+    def has_video(self):
+        return False if self.disablevideo else config.enable_video()
+
     def on_pipeline_start(self):
         '''
         Called when the stream starts
@@ -152,7 +193,7 @@ class YoutubeDLInput(Input):
         for connection in self.dest_connections():
             connection.unblock_intersrc_if_ready()
 
-        # If the user has asked ot start at a certain timespot, do it now
+        # If the user has asked ot start at a certain timestamp, do it now
         # (as the position cannot be set until the pipeline is PAUSED/PLAYING):
         self._handle_position_seek()
 
@@ -185,12 +226,17 @@ class YoutubeDLInput(Input):
         props = {}
         for (audioOrVideo, element) in elements.items():
             if not element:
+                MyLogger.error('YT-dl missing element!')
                 return
+
             caps = element.get_static_pad('sink').get_current_caps()
             if not caps:
+                MyLogger.error('YT-dl missing caps!')
                 return
+
             size = caps.get_size()
             if size == 0:
+                MyLogger.error('YT-dl caps size is 0!')
                 return
 
             structure = caps.get_structure(0)
@@ -225,7 +271,7 @@ class YoutubeDLInput(Input):
         and 'percent' (the amount of buffering retrieved, 100=full buffer)
         '''
         query_buffer = Gst.Query.new_buffering(Gst.Format.PERCENT)
-        result = self.pipeline.query(query_buffer)
+        result = self.pipeline.query(query_buffer) if hasattr(self, 'pipeline') else None
         return query_buffer.parse_buffering_percent() if result else None
 
     def summarise(self, for_config_file=False):
@@ -234,6 +280,7 @@ class YoutubeDLInput(Input):
         '''
         s = super().summarise(for_config_file)
         global channel_val
+        global format_val
 
         if not for_config_file:
             #s['channel'] = channel_val

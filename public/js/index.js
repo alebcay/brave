@@ -13,49 +13,42 @@ function rebuild_mixer_and_output_with_delayed_start () {
 }
 
 function add_bitwave_text () {
-  console.log('adds [bitwave.tv] text');
-
   const addbwtext = {'type': 'text', 'text': '[bitwave.tv]', 'valignment': 'bottom', 'source': 'mixer1'};
   submitCreateOrEdit('overlay', null, addbwtext)
-
 }
 
 function add_time_overlay () {
-  console.log("adds time overlay for local time");
-
   const createTime = {'type': 'clock', 'text': '', 'valignment': 'bottom', 'source': 'mixer1'};
   submitCreateOrEdit('overlay', null, createTime)
-
 }
 
 function qa_streamlink () {
   const url_link = $('#quickaddrebox').val();
-  //console.log("add url:", url_link)
   const createsl ={'type': 'streamlink', 'uri': url_link, 'volume': 1, 'loop': false};
   submitCreateOrEdit('input', null, createsl);
-  $('#quickaddrebox').val("")
+  $('#quickaddrebox').val('');
 }
 
 function qa_ytdl () {
   const url_link = $('#quickaddrebox').val();
-  //console.log("add url:", url_link)
-  const createytdl ={'type': 'youtubedl', 'uri': url_link, 'volume': 1, 'loop': false};
+  const createytdl ={'type': 'youtubedl', 'uri': url_link, 'volume': 1, 'loop': false, disablevideo: false};
   submitCreateOrEdit('input', null, createytdl);
-  $('#quickaddrebox').val("")
-
+  $('#quickaddrebox').val('');
 }
 
 function qa_text () {
   const url_link = $('#quickaddrebox').val();
-  //console.log("add url:", url_link)
   const createtext ={'type': 'text', 'text': url_link, 'valignment': 'bottom', 'source': 'mixer1'};
   submitCreateOrEdit('input', null, createtext);
-  $('#quickaddrebox').val("")
-
+  $('#quickaddrebox').val('');
 }
 
 function onPageLoad () {
   $(document).ready(function() {
+    // Navbar quick add buttons
+    $('#nav-add-input').click(inputsHandler.showFormToAdd);
+    $('#nav-add-ytdl').click( () => inputsHandler.showFormToAdd({ type: 'youtubedl' } ) );
+
     $('#new-input-button').click(inputsHandler.showFormToAdd);
     $('#new-mixer-button').click(mixersHandler.create);
     $('#new-overlay-button').click(overlaysHandler.showFormToAdd);
@@ -73,6 +66,9 @@ function onPageLoad () {
 
     // global stop of output
     $('#all-stop').click(global_all_stop);
+
+    // Quicker add
+    $('#quick-add-ytdl').click(qa_ytdl);
 
     // do quick adds for quickaddrebox
     $('#qa-youtubedl').click(qa_ytdl);
@@ -288,6 +284,37 @@ function formGroup (details) {
     e.append(s)
   }
 
+  else if ( details.type === 'range' ) {
+    const input = $(document.createElement('input'));
+    const msg   = $('<span></span>');
+    msg.addClass( 'text-info' );
+
+    input.addClass( 'custom-range' );
+
+    const fields = [
+      'type',
+      'name', 'id',
+      'min', 'max', 'step', 'value',
+      'data-slider-min', 'data-slider-max', 'data-slider-step', 'data-slider-value',
+    ];
+
+    fields.forEach( field => input.attr( field, details[field] ) );
+
+    e.append( label );
+    e.append( input );
+
+    const showPercent = event => {
+      const val = event.value || event.target.value;
+      msg.text( `${val}%` );
+      input.attr('data-slider-value', val );
+    };
+    showPercent({ value: details.value } );
+
+    input.on( 'input', showPercent );
+
+    e.append(msg);
+  }
+
   else {
     e.append(label);
     const input = $(document.createElement('input'));
@@ -298,16 +325,16 @@ function formGroup (details) {
     e.append(input);
 
     if ( details['data-slider-value'] ) {
-      input.get().classList = ['custom-range'];
-      let msg = $('<span></span>');
+      console.log( 'data-slider-value called!' );
+      const msg = $('<span></span>');
       const showPercent = event => {
         const val = event.value || event.target.value;
         msg.text(`${val}%`);
-        input.setAttribute('data-slider-value', val );
+        // input.setAttribute('data-slider-value', val );
       };
       showPercent({value: details['data-slider-value']});
       input.on( 'input', showPercent );
-      e.append(msg)
+      e.append(msg);
     }
   }
 
@@ -318,7 +345,7 @@ function formGroup (details) {
     e.append(small)
   }
 
-  return e
+  return e;
 }
 
 function showModal (label, content, onSave) {
@@ -326,8 +353,8 @@ function showModal (label, content, onSave) {
   $('#primary-modal h5').html(label);
   $('#primary-modal .modal-body').html(content);
 
-  if (onSave) {
-    const saveButton = $('<button type="submit" class="btn btn-sm btn-success save-button">Save</button>');
+  if ( onSave ) {
+    const saveButton = $('<button type="submit" class="btn btn-success save-button">Save</button>');
     saveButton.click(onSave);
     $('#primary-modal .modal-footer')
       .empty()
@@ -338,7 +365,7 @@ function showModal (label, content, onSave) {
 function hideModal () {
   $('#primary-modal').modal('hide');
   $('#primary-modal .modal-body').empty();
-  $('#primary-modal .modal-footer').empty()
+  $('#primary-modal .modal-footer').empty();
 }
 
 function restartBraveConfirmation() {
@@ -387,10 +414,10 @@ function noItems () {
 }
 
 function showNoItemsMessage() {
-  $('#cards').append(`Use the 'Add' button above to create inputs, mixers, outputs and overlays.`)
+  $('#cards').append(`Use the 'Add' button above to create inputs, mixers, outputs and overlays.`);
 }
 
-function submitCreateOrEdit (blockType, id, values) {
+function submitCreateOrEdit ( blockType, id, values ) {
   const isUpdate = (id !== null && id !== undefined);
   const type = isUpdate ? 'POST' : 'PUT';
   const url = `api/${blockType}s` + (isUpdate ? `/${id}` : '');
@@ -403,15 +430,15 @@ function submitCreateOrEdit (blockType, id, values) {
       const msg = isUpdate ?
         `Successfully updated ${blockType} ${id}` :
         `Successfully created ${blockType} ${response.id}`;
-      showMessage(msg, 'success');
-      updatePage()
+      showMessage ( msg, 'success' );
+      updatePage();
     },
     error: response => {
       let msg = `Error creating ${blockType}` + (isUpdate ? ` ${id}` : '');
       if (response.responseJSON && response.responseJSON.error) {
         msg += ': ' + response.responseJSON.error
       }
-      showMessage(msg, 'warning')
+      showMessage ( msg, 'warning' );
     }
   });
 }

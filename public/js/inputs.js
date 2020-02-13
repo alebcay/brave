@@ -1,63 +1,88 @@
 //
 // This web interface has been quickly thrown together. It's not production code.
 //
+
+// Make cleaner numbers
+const prettyNumber = ( number, digits ) => {
+  const units = ['k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'];
+  for( let i=units.length - 1; i >= 0; i-- ) {
+    const decimal = Math.pow(1000, i + 1);
+    if ( number <= -decimal || number >= decimal ) return +( number / decimal ).toFixed( digits ) + units[i];
+  }
+  return number;
+};
+
 inputsHandler = {};
 inputsHandler.items = [];
 const GstSecond = 1000000000;
 
 inputsHandler.draw = function() {
-  inputsHandler._drawCards()
+  inputsHandler._drawCards();
 };
 
 inputsHandler.findById = function(id) {
-  return inputsHandler.items.find(function(x) { return x.id == id })
+  return inputsHandler.items.find(function(x) { return x.id == id });
 };
 
-inputsHandler.showFormToAdd = function() {
-  inputsHandler._showForm({})
+inputsHandler.showFormToAdd = function( defInput ) {
+  inputsHandler._showForm( { ...defInput } );
 };
 
 inputsHandler.showFormToEdit = function(input) {
-  inputsHandler._showForm(input)
+  inputsHandler._showForm(input);
 };
 
 inputsHandler.seek = function(input) {
-  var end = input.duration/GstSecond;
-  secondsSeek = prompt("What should input " + input.id + "seek to, in seconds. (0=start, " + end + "=end)");
-  submitCreateOrEdit('input', input.id, {position:secondsSeek*GstSecond})
+  const end = input.duration/GstSecond;
+  const secondsSeek = prompt(`What should input ${input.id} seek to, in seconds. (0=start, ${end }=end)`);
+  submitCreateOrEdit('input', input.id, {position:secondsSeek * GstSecond});
 };
 
 inputsHandler._drawCards = () => {
-  $('#cards').append(inputsHandler.items.map(inputsHandler._asCard))
+  $('#cards').append( inputsHandler.items.map( inputsHandler._asCard ) );
 };
 
 inputsHandler._asCard = (input) => {
   return components.card({
-    title: prettyUid(input.uid) + ' (' + prettyType(input.type) + ') - ' + input.channel,
+    title: `${prettyUid(input.uid)} (${prettyType(input.type)}) - ${input.channel}`,
     options: inputsHandler._optionButtonsForInput(input),
     body: inputsHandler._inputCardBody(input),
     state: components.stateBox(input, inputsHandler.setState),
-    mixOptions: components.getMixOptions(input)
-  })
+    mixOptions: components.getMixOptions(input),
+  });
 };
 
 inputsHandler._optionButtonsForInput = (input) => {
   const buttons = [];
   buttons.push(components.editButton().click(() => { inputsHandler.showFormToEdit(input); return false }));
   buttons.push(components.deleteButton().click(() => { inputsHandler.delete(input); return false }));
-  if (input.type === 'uri') {
+  if ( input.type === 'uri' || input.type === 'youtubedl' ) {
     buttons.push(components.seekButton().click(() => { inputsHandler.seek(input); return false }))
   }
-  return buttons
+  return buttons;
 };
 
 inputsHandler._inputCardBody = (input) => {
-  var details = [];
-  if (input.uri) details.push('<div><code>' + input.uri + '</code></div>');
+  const details = [];
+
+  // Thumbnail
+  if (input.hasOwnProperty('thumbnail')) details.push(`<div class="embed-responsive embed-responsive-16by9 mb-2"><img src="${input.thumbnail}" class="embed-responsive-item" alt="${input.title}"></div>`);
+
+  // Video / Stream info
+  if (input.hasOwnProperty('title')) details.push(`<a href="${input.uri}" target="_blank"><span class="text-info text-truncate"><strong>${input.title}</strong></span></a>`);
+  if (input.uri) details.push(`<div style="color: red;"><strong>${input.uri}</strong></div>`);
+  if (input.hasOwnProperty('channel')) details.push(`<div><strong>Channel:</strong> ${input.channel}</div>`);
+  if (input.hasOwnProperty('view_count')) details.push(`<div><strong>${prettyNumber(input.view_count)} views</strong></div>`);
+  if (input.hasOwnProperty('categories')) details.push(`<div><strong>Categories:</strong><div class="badge badge-light">${input.categories}</div></div>`);
+
+  details.push(`<div class="dropdown-divider border-secondary my-1"></div>`);
+
+  // Dimensions
   if (input.hasOwnProperty('width') &&
     input.hasOwnProperty('height')) details.push('<strong>Input size:</strong> ' + prettyDimensions(input));
   if (input.hasOwnProperty('width') &&
     input.hasOwnProperty('height')) details.push('<div><strong>Resized to:</strong> ' + prettyDimensions(input) + '</div>');
+
   if (input.hasOwnProperty('framerate')) details.push('<div><strong>Framerate:</strong> ' + Math.round(input.framerate) + '</div>');
   if (input.hasOwnProperty('audio_channels')) details.push('<div><strong>Audio channels:</strong> ' + input.audio_channels + '</div>');
   if (input.hasOwnProperty('audio_rate')) details.push('<div><strong>Audio rate:</strong> ' + input.audio_rate + '</div>');
@@ -73,53 +98,68 @@ inputsHandler._inputCardBody = (input) => {
   if (input.hasOwnProperty('host')) details.push('<div><strong>Host:</strong> ' + input.host + '</div>');
   if (input.hasOwnProperty('port')) details.push('<div><strong>Port:</strong> ' + input.port + '</div>');
   if (input.hasOwnProperty('container')) details.push('<div><strong>Container:</strong> ' + input.container + '</div>');
-  if (input.hasOwnProperty('channel')) details.push('<div><strong>Channel:</strong> ' + input.channel + '</div>');
+
+  details.push(`<div class="dropdown-divider border-secondary my-1"></div>`);
+
+  if (input.hasOwnProperty('format')) details.push(`<div><strong>Format:</strong> ${input.format}</div>`);
+  if (input.hasOwnProperty('format_note')) details.push(`<div><strong>Format Note:</strong> ${input.format_note}</div>`);
+  if (input.hasOwnProperty('protocol')) details.push(`<div><strong>Protocol:</strong> ${input.protocol}</div>`);
+  if (input.hasOwnProperty('fps')) details.push(`<div><strong>FPS:</strong> ${input.fps}</div>`);
 
   if (input.hasOwnProperty('duration')) {
-    var duration = prettyDuration(input.duration);
-    if (duration !== null) details.push('<strong>Duration:</strong> ' + duration)
+    const duration = prettyDuration(input.duration);
+    if (duration !== null) details.push(`<strong>Duration:</strong> ${duration}`)
   }
 
   if (input.hasOwnProperty('buffer_duration')) {
-    var duration = prettyDuration(input.buffer_duration);
-    if (duration !== null) details.push('<strong>Buffer duration:</strong> ' + duration)
+    const duration = prettyDuration(input.buffer_duration);
+    if (duration !== null) details.push(`<strong>Buffer duration:</strong> ${duration}`)
   }
 
-  if (input.hasOwnProperty('error_message')) details.push('<strong>ERROR:</strong> <span style="color:red">' + input.error_message + '</span>');
-  return details.map(d => $('<div></div>').append(d))
+  if (input.hasOwnProperty('error_message')) details.push(`<strong>ERROR:</strong> <span style="color: red;">${input.error_message}</span>`);
+
+  return details.map( d => $('<div></div>' ).append( d ) );
 };
 
-inputsHandler._handleNewFormType = function(event) {
-  inputsHandler._populateForm({type: event.target.value})
+inputsHandler._handleNewFormType = function ( event ) {
+  inputsHandler._populateForm({type: event.target.value});
 };
 
-inputsHandler._showForm = function(input) {
-  inputsHandler.currentForm = $('<form onsubmit="console.log"></form>');
-  var label = input && input.hasOwnProperty('id') ? 'Edit input ' + input.id : 'Add input';
+inputsHandler._showForm = function ( input ) {
+  inputsHandler.currentForm = $('<form onsubmit="inputsHandler._handleFormSubmit()"></form>');
+  const label = input && input.hasOwnProperty('id') ? 'Edit input ' + input.id : 'Add input';
   showModal(label, inputsHandler.currentForm, inputsHandler._handleFormSubmit);
-  inputsHandler._populateForm(input)
+  inputsHandler._populateForm( input );
 };
 
-inputsHandler._populateForm = function(input) {
-  var form = inputsHandler.currentForm;
+inputsHandler._populateForm = function ( input ) {
+  const form = inputsHandler.currentForm;
   form.empty();
 
-  var uriExamples = '';
+  let uriExamples = '';
   if (input.type && input.type === 'uri') {
     uriExamples = 'RTMP example: <code>rtmp://184.72.239.149/vod/BigBuckBunny_115k.mov</code></div>' +
       '<div>RTSP example: <code>rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov</code></div>' +
       '<div>Example: <code>file:///tmp/my_movie.mp4</code>'
   }
-  else if (input.type && input.type === 'image') {
+  else if ( input.type && input.type === 'image' ) {
     uriExamples = 'Enter a local or URL location of a JPG, PNG, or SVG file.'
   }
+
+  const disableVideoBox = formGroup({
+    id: 'input-disable-video',
+    type: 'checkbox',
+    name: 'disablevideo',
+    label: 'Disable video output (audio only)',
+    value: input.disablevideo,
+  });
 
   const loopBox = formGroup({
     id: 'input-loop',
     type: 'checkbox',
     name: 'loop',
     label: 'Loop (content replays once finished)',
-    value: input.loop
+    value: input.loop,
   });
 
   const bufferDurationBox = formGroup({
@@ -128,7 +168,7 @@ inputsHandler._populateForm = function(input) {
     name: 'buffer_duration',
     type: 'number',
     value: input.buffer_duration / GstSecond,
-    help: 'Amount to buffer input, in seconds. Leave blank for default.'
+    help: 'Amount to buffer input, in seconds. Leave blank for default.',
   });
 
   const hostBox = formGroup({
@@ -136,7 +176,7 @@ inputsHandler._populateForm = function(input) {
     label: 'Hostname',
     name: 'host',
     type: 'text',
-    value: input.host || '0.0.0.0'
+    value: input.host || '0.0.0.0',
   });
 
   const portBox = formGroup({
@@ -144,7 +184,7 @@ inputsHandler._populateForm = function(input) {
     label: 'Port',
     name: 'port',
     type: 'number',
-    value: input.port
+    value: input.port,
   });
 
   const containerBox = formGroup({
@@ -152,7 +192,7 @@ inputsHandler._populateForm = function(input) {
     label: 'Container',
     name: 'container',
     options: {mpeg: 'MPEG', ogg: 'OGG'},
-    value: (input.container || 'mpeg')
+    value: (input.container || 'mpeg'),
   });
 
   const uriRow = formGroup({
@@ -181,7 +221,7 @@ inputsHandler._populateForm = function(input) {
     name: 'pattern',
     options: inputsHandler.patternTypes,
     initialOption: 'Select a pattern...',
-    value: input.pattern || inputsHandler.patternTypes[0]
+    value: input.pattern || inputsHandler.patternTypes[0],
   });
 
   const waveBox = formGroup({
@@ -190,7 +230,7 @@ inputsHandler._populateForm = function(input) {
     name: 'wave',
     options: inputsHandler.waveTypes,
     initialOption: 'Select a wave...',
-    value: input.wave || inputsHandler.waveTypes[0]
+    value: input.wave || inputsHandler.waveTypes[0],
   });
 
   const freqBox = formGroup({
@@ -201,7 +241,7 @@ inputsHandler._populateForm = function(input) {
     value: input.freq || 440,
     min: 20,
     step: 100,
-    max: 20000
+    max: 20000,
   });
 
   const device = formGroup({
@@ -209,7 +249,7 @@ inputsHandler._populateForm = function(input) {
     label: 'Device Num',
     name: 'device',
     type: 'number',
-    value: input.device || 0
+    value: input.device || 0,
   });
 
   const connection = formGroup({
@@ -219,7 +259,7 @@ inputsHandler._populateForm = function(input) {
     type: 'number',
     options: inputsHandler.decklinkConnection,
     initialOption: 'Select connection type',
-    value: input.connection || inputsHandler.decklinkConnection[1]
+    value: input.connection || inputsHandler.decklinkConnection[1],
   });
 
   const mode = formGroup({
@@ -229,15 +269,15 @@ inputsHandler._populateForm = function(input) {
     type: 'number',
     options: inputsHandler.decklinkModes,
     initialOption: 'Select input mode',
-    value: input.mode || inputsHandler.decklinkModes[17]
+    value: input.mode || inputsHandler.decklinkModes[17],
   });
 
-  var isNew = !input.hasOwnProperty('id');
+  const isNew = !input.hasOwnProperty('id');
   if (isNew) {
-    var options = {
+    const options = {
       'uri': 'URI (for files, RTMP, RTSP and HLS)',
-      'youtubedl': 'Youtubedl for adding urls',
-      'streamlink': 'Streamlink for adding urls',
+      'youtubedl': 'YouTube-dl (streams & videos)',
+      'streamlink': 'Streamlink for adding streams',
       'image': 'Image',
       'tcp_client': 'TCP Client (receive from a TCP server)',
       'html': 'HTML (for showing a web page)',
@@ -255,7 +295,7 @@ inputsHandler._populateForm = function(input) {
     }))
   }
   else {
-    form.append('<input type="hidden" name="id" value="' + input.id + '">')
+    form.append(`<input type="hidden" name="id" value="${input.id}">`)
   }
 
   if (!input.type) {
@@ -287,15 +327,14 @@ inputsHandler._populateForm = function(input) {
     form.append(sizeBox);
     form.append(components.volumeInput(input.volume));
     form.append(bufferDurationBox);
-    //form.append(suriRow);
   }
   else if (input.type === 'youtubedl') {
     if (isNew) form.append(uriRow);
+    form.append(disableVideoBox);
     form.append(loopBox);
     form.append(sizeBox);
     form.append(components.volumeInput(input.volume));
     form.append(bufferDurationBox);
-    //form.append(suriRow);
   }
   else if (input.type === 'html') {
     if (isNew) form.append(uriRow);
@@ -315,24 +354,42 @@ inputsHandler._populateForm = function(input) {
   form.find('select[name="type"]').change(inputsHandler._handleNewFormType);
 };
 
-inputsHandler._handleFormSubmit = function() {
-  var form = inputsHandler.currentForm;
-  var idField = form.find('input[name="id"]');
-  var id = idField.length ? idField.val() : null;
+inputsHandler._handleFormSubmit = function () {
+  const form = inputsHandler.currentForm;
+  const idField = form.find('input[name="id"]');
+  const id = idField.length ? idField.val() : null;
   const isNew = id == null;
   const input = isNew ? {} : inputsHandler.findById(id);
   const newProps = {};
 
-  fields = ['type', 'uri', 'position', 'dimensions', 'freq', 'volume', 'input_volume', 'pattern', 'wave', 'buffer_duration', 'host', 'port', 'container','channel'];
+  const fields = [
+    'type',
+    'uri',
+    'position',
+    'dimensions',
+    'freq',
+    'volume',
+    'input_volume',
+    'pattern',
+    'wave',
+    'buffer_duration',
+    'host',
+    'port',
+    'container',
+    'channel',
+  ];
   fields.forEach(function(f) {
-    var input = form.find('[name="' + f + '"]');
+    const input = form.find(`[name="${f}"]`);
     if (input && input.val() !== null && input.val() !== '') {
-      newProps[f] = input.val()
+      newProps[f] = input.val();
     }
   });
 
   const loopEntry = form.find('[name="loop"]');
   if (loopEntry && loopEntry.length > 0) newProps.loop = loopEntry.is(":checked");
+
+  const disablevideoEntry = form.find('[name="disablevideo"]');
+  if (disablevideoEntry && disablevideoEntry.length > 0) newProps.disablevideo = disablevideoEntry.is(":checked");
 
   if (newProps.volume) newProps.volume /= 100; // convert percentage
   if (newProps.buffer_duration) newProps.buffer_duration *= GstSecond;
@@ -340,16 +397,16 @@ inputsHandler._handleFormSubmit = function() {
   splitDimensionsIntoWidthAndHeight(newProps);
   splitPositionIntoXposAndYpos(newProps);
 
-  var type = newProps.type || input.type;
+  const type = newProps.type || input.type;
 
-  if (!type) {
+  if ( !type ) {
     showMessage('Please select a type', 'info');
-    return
+    return;
   }
 
-  if (type === 'test_video' && !newProps.pattern) {
+  if ( type === 'test_video' && !newProps.pattern ) {
     showMessage('Please select a pattern', 'info');
-    return
+    return;
   }
 
   const GOOD_URI_REGEXP = {
@@ -358,45 +415,47 @@ inputsHandler._handleFormSubmit = function() {
     'html': '^(file||http|https)://'
   };
 
-  if (GOOD_URI_REGEXP[type]) {
+  if ( GOOD_URI_REGEXP[type] ) {
     if (newProps.uri) {
       if (!newProps.uri.match(GOOD_URI_REGEXP[type])) {
-        showMessage('uri must start with ' + GOOD_URI_REGEXP, 'info')
+        showMessage('uri must start with ' + GOOD_URI_REGEXP, 'info');
+        return;
       }
     }
-    else if (isNew) {
-      showMessage('URI field is required', 'info')
+    else if ( isNew ) {
+      showMessage('URI field is required', 'info');
+      return;
     }
   }
 
-  if (!Object.keys(newProps).length) {
+  if ( !Object.keys( newProps ).length ) {
     showMessage('No new values', 'info');
-    return
+    return;
   }
 
-  submitCreateOrEdit('input', id, newProps);
+  submitCreateOrEdit('input', id, newProps );
   hideModal();
 };
 
 inputsHandler.delete = function(input) {
   $.ajax({
-    contentType: "application/json",
+    contentType: 'application/json',
     type: 'DELETE',
-    url: 'api/inputs/' + input.id,
+    url: `api/inputs/${input.id}`,
     dataType: 'json',
     success: function() {
-      showMessage('Successfully deleted input ' + input.id, 'success');
+      showMessage(`Successfully deleted input ${input.id}`, 'success');
       updatePage()
     },
     error: function() {
-      showMessage('Sorry, an error occurred whlst deleting input ' + input.id, 'danger')
+      showMessage(`Error occurred while deleting input ${input.id}`, 'danger')
     }
   });
   return false
 };
 
-inputsHandler.setState = function(id, state) {
-  return submitCreateOrEdit('input', id, {state})
+inputsHandler.setState = function( id, state ) {
+  return submitCreateOrEdit('input', id, { state })
 };
 
 inputsHandler.patternTypes = [
@@ -487,10 +546,10 @@ inputsHandler.decklinkConnection = [
   'S-Video',
 ];
 
-function prettyDuration(d) {
+function prettyDuration( d ) {
   if (d < 0) return null;
-  var seconds = Math.floor(d / GstSecond);
-  var minutes = Math.floor(seconds/60);
-  var justSeconds = seconds % 60;
+  const seconds = Math.floor(d / GstSecond);
+  const minutes = Math.floor(seconds/60);
+  const justSeconds = seconds % 60;
   return minutes + ':' + (justSeconds < 10 ? '0' : '') + justSeconds
 }

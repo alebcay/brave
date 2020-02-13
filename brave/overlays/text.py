@@ -11,11 +11,11 @@ class TextOverlay(Overlay):
             **super().permitted_props(),
             'text': {
                 'type': 'str',
-                'default': 'Default text'
+                'default': 'Default text',
             },
             'font_size': {
                 'type': 'int',
-                'default': 44
+                'default': 18,
             },
             'valignment': {
                 'type': 'str',
@@ -24,13 +24,34 @@ class TextOverlay(Overlay):
                     'top': 'Top',
                     'center': 'Center',
                     'bottom': 'Bottom',
-                    'baseline': 'Baseline'
-                }
+                    'baseline': 'Baseline',
+                },
+            },
+            'halignment': {
+                'type': 'str',
+                'default': 'left',
+                'permitted_values': {
+                    'left': 'Left',
+                    'center': 'Center',
+                    'right': 'Right',
+                },
+            },
+            'outline': {
+                'type': 'bool',
+                'default': False,
+            },
+            'shadow': {
+                'type': 'bool',
+                'default': True,
+            },
+            'shaded_background': {
+                'type': 'bool',
+                'default': False,
             },
             'visible': {
                 'type': 'bool',
-                'default': False
-            }
+                'default': False,
+            },
         }
 
     def create_elements(self):
@@ -40,6 +61,8 @@ class TextOverlay(Overlay):
     def set_element_values_from_props(self):
         self.element.set_property('text', self.text)
         self.element.set_property('valignment', self.valignment)
-        self.element.set_property('halignment', 'left')
+        self.element.set_property('halignment', self.halignment)
         self.element.set_property('font-desc', 'Sans, %d' % self.font_size)
-        self.element.set_property('shaded-background', True)
+        self.element.set_property('draw-outline', self.outline)
+        self.element.set_property('draw-shadow', self.shadow)
+        self.element.set_property('shaded-background', self.shaded_background)

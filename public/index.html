@@ -25,6 +25,12 @@
 
                     <!-- Add pipeline -->
                     <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-sm btn-success" id="nav-add-input">
+                            Input
+                        </button>
+                        <button type="button" class="btn btn-sm btn-success" id="nav-add-ytdl">
+                            YouTubeDL
+                        </button>
                         <button type="button" class="btn btn-sm btn-info" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Add <i class="fas fa-sm fa-plus"></i>
                         </button>
@@ -79,7 +85,7 @@
             </div>
 
             <!-- CPU Usage -->
-            <div class="text-right" id="cpu-stats"></div>
+            <div class="text-right text-monospace" id="cpu-stats"></div>
         </div>
     </nav>
 </header>
@@ -93,6 +99,9 @@
                 <div class="input-group">
                     <input type="text" id="quickaddrebox">
                     <div class="input-group-append">
+                        <button type="button" class="btn btn-sm btn-success" id="quick-add-ytdl">
+                            YouTubeDL
+                        </button>
                         <button type="button" class="btn btn-sm btn-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Quick add <i class="fas fa-sm fa-plus"></i>
                         </button>
@@ -114,7 +123,7 @@
         <div class="row" id="cards"></div>
     </div>
 
-    <div style="clear:both"></div>
+    <div style="clear: both;"></div>
 
     <!-- Primary Modal (for adding and editing things) -->
     <div class="modal fade" id="primary-modal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -132,7 +141,7 @@
         </div>
     </div>
 
-    <div id="top-message" class="alert alert-warning alert-dismissible fade" role="alert" style="z-index: 1000">
+    <div id="top-message" class="alert alert-warning alert-dismissible fade show" role="alert" style="z-index: 2000">
         <div></div>
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true"><i class="fas fa-times"></i></span>

@@ -25,7 +25,7 @@ To learn more, read below, or see the [FAQ](docs/faq.md), [API guide](docs/api.m
 ![Architecture diagram](docs/assets/arch.png "Architecture diagram")
 
 ### Web interface screenshot
-![Web interface screenshot](docs/assets/screenshot.png "Web interface screenshot")
+![Web interface screenshot](docs/assets/brave-screenshot.png "Web interface screenshot")
 
 This web interface is optional; Brave can be controlled via the API or startup config file.
 
@@ -79,7 +79,9 @@ Supported overlay types:
 There can be any number of mixers. They can take any number of inputs (including the output from another mixer). It can send to any number of outputs. [Read more about mixers.](docs/mixers.md)
 
 ## Project status
-This project is still work in progress, and has not been thoroughly tested or used any any production environments.
+This project is still work in progress, and has not been thoroughly tested ~~or used any any production environments~~.
+
+This project breaks *a lot* and is mid process of a nearly complete overhaul to fix, upgrade, and improve all areas of this project to make it semi viable in a production environment.
 
 ## Installation
 First, install the dependencies, and then clone this repo.
@@ -103,7 +105,7 @@ Then get the package id from the end of the build process:
 Then run the new docker image:
 `docker run --name brave --rm -t -i -p 5000:5000 PackageHashNumber`
 
-Optionally you can also mount a local directory interal to the docker instance:
+Optionally you can also mount a local directory integral to the docker instance:
 `-v /path/in/host:/videos`
 
 ## How to use
