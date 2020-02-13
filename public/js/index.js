@@ -109,7 +109,7 @@ $('.toast').toast();
 const toastHolder = $('#toast-holder');
 
 const toastTemplate = ( title, message ) => `
-<div class="toast text-white" role="alert" aria-live="assertive" aria-atomic="true">
+<div class="toast show text-white" role="alert" aria-live="assertive" aria-atomic="true">
   <div class="toast-header">
     <strong class="mr-auto">${title}</strong>
     <small class="text-muted">Just now</small>
