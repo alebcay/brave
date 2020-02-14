@@ -139,7 +139,7 @@ class YoutubeDLInput( Input ):
         #is_rtmp = self.suri.startswith('rtmp')
         #playbin_element = 'playbin' if is_rtmp else 'playbin'
 
-        if hasattr( self, suri ):
+        if hasattr( self, 'suri' ):
             is_rtmp = self.suri.startswith('rtmp')
             playbin_element = 'playbin' if is_rtmp else 'playbin3'
         else:
