@@ -172,7 +172,7 @@ class YoutubeDLInput( Input ):
         self.playsink.set_property('audio-sink', fakesink)
 
     def create_video_elements(self):
-        bin_as_string = ( f'videoconvert ! videoscale ! capsfilter name=capsfilter ! {self.default_video_pipeline_string_end()}' )
+        bin_as_string = ( f'capsfilter ! videoconvert ! videoscale ! capsfilter name=capsfilter ! {self.default_video_pipeline_string_end()}' )
         bin = Gst.parse_bin_from_description( bin_as_string, True )
 
         self.capsfilter         = bin.get_by_name( 'capsfilter' )
@@ -184,7 +184,7 @@ class YoutubeDLInput( Input ):
         self.playsink.set_property( 'video-sink', bin )
 
     def create_audio_elements(self):
-        bin_as_string = ( f'audiorate ! audioconvert ! audioresample ! {config.default_audio_caps()} ! {self.default_audio_pipeline_string_end()}' )
+        bin_as_string = ( f'{config.default_audio_caps()} ! audiorate ! audioconvert ! audioresample ! {config.default_audio_caps()} ! {self.default_audio_pipeline_string_end()}' )
         bin = Gst.parse_bin_from_description( bin_as_string, True )
 
         self.final_audio_tee    = bin.get_by_name( 'final_audio_tee' )
