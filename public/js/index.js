@@ -109,7 +109,7 @@ $('.toast').toast();
 const toastHolder = $('#toast-holder');
 
 const toastTemplate = ( title, message ) => `
-<div class="toast text-white fade" role="alert" aria-live="assertive" aria-atomic="true">
+<div class="toast text-white" role="alert" aria-live="assertive" aria-atomic="true">
   <div class="toast-header">
     <strong class="mr-auto">${title}</strong>
     <small class="text-muted">Just now</small>
@@ -122,18 +122,11 @@ const toastTemplate = ( title, message ) => `
 `;
 
 const createToast = ( title, message, type ) => {
-  // const toast = $($.parseHTML( toastTemplate( title, message ) ) );
-
   const toast = $(`<div></div>`)
     .append( toastTemplate( title, message ) )
     .find( '.toast' );
-
   toast.addClass(`bg-${type}`);
-
-  const newToast = toastHolder.append( toast );
-
-  toast.toast();
-
+  toastHolder.append( toast );
   return toast;
 };
 
@@ -145,13 +138,11 @@ function showMessage ( m, level ) {
 
   const toast = createToast( level, m, level );
 
-  toast.toast( 'show' );
+  toast.toast({ delay: 2000 });
+  // toast.toast( 'show' );
 
-  setTimeout( () => {
-    toast.remove();
-    toast.toast('dispose');
-  }, 5000 );
-  
+  setTimeout( () => toast.remove(), 5000 );
+
 }
 
 function hideMessage () {
