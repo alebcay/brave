@@ -93,6 +93,14 @@
 <main class="container-fluid">
 
     <div class="mt-4">
+
+        <div class="row">
+            <!-- New toast -->
+            <div class="col" style="position: relative;">
+                <div id="toast-holder" style="position: absolute; top: 0; right: 0;"></div>
+            </div>
+        </div>
+
         <div class="row justify-content-between">
             <div class="col">
                 <!-- Quick Add -->
@@ -135,32 +143,6 @@
                 </div>
                 <div class="modal-body"></div>
                 <div class="modal-footer"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Old toast -->
-    <div id="top-message" class="alert alert-warning alert-dismissible fade" role="alert" style="z-index: 2000">
-        <div></div>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true"><i class="fas fa-times"></i></span>
-        </button>
-    </div>
-
-    <!-- New toast -->
-    <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
-        <div id="toast-holder" style="position: absolute; top: 0; right: 0;">
-            <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="toast-header">
-                    <strong class="mr-auto">Bootstrap</strong>
-                    <small class="text-muted">Just now</small>
-                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="toast-body">
-                    Hello, world! This is a toast message.
-                </div>
             </div>
         </div>
     </div>

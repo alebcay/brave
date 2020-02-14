@@ -131,25 +131,19 @@ const createToast = ( title, message, type ) => {
 };
 
 function showMessage ( m, level ) {
-  const VALID_LEVELS = ['warning', 'success', 'danger', 'info'];
-  if ( !level || VALID_LEVELS.indexOf(level ) === -1 ) level = 'warning';
-
-  console.debug('Showing toast', level, ' message:', m);
-
+  const VALID_LEVELS = [ 'warning', 'success', 'danger', 'info' ];
+  if ( !level || VALID_LEVELS.indexOf( level ) === -1 ) level = 'warning';
   const toast = createToast( level, m, level );
-
-  toast.toast({ delay: 2000 });
-  // toast.toast( 'show' );
-
+  toast.toast( { delay: 4000 } );
+  toast.toast( 'show' );
   setTimeout( () => toast.remove(), 5000 );
-
 }
 
 function hideMessage () {
   $('.toast').dispose();
 }
 
-function getSelect(name, currentlySelectedKey, msg, options, alwaysShowUnselectedOption) {
+function getSelect ( name, currentlySelectedKey, msg, options, alwaysShowUnselectedOption ) {
   const h = $('<select name="' + name + '"></select>');
   h.addClass('form-control form-control-sm');
   if (!currentlySelectedKey || alwaysShowUnselectedOption) $(h).append('<option value="">' + msg + '</option>');
@@ -163,7 +157,7 @@ function getSelect(name, currentlySelectedKey, msg, options, alwaysShowUnselecte
   return h;
 }
 
-function getDimensionsSelect (name, width, height) {
+function getDimensionsSelect ( name, width, height ) {
   const currentDimensions = width && height ? width + 'x' + height : null;
   const dimensionsOptions = {};
   dimensionsOptions[currentDimensions] = prettyDimensions({width: width, height: height});
