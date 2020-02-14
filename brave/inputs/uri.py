@@ -70,22 +70,26 @@ class UriInput(Input):
         self.playsink.set_property('audio-sink', fakesink)
 
     def create_video_elements(self):
-        bin_as_string = ('videoconvert ! videoscale ! capsfilter name=capsfilter ! '
-                         'queue ! ' + self.default_video_pipeline_string_end())
+        bin_as_string = f'videoconvert ! videoscale ! capsfilter name=capsfilter ! {self.default_video_pipeline_string_end()}'
         bin = Gst.parse_bin_from_description(bin_as_string, True)
 
-        self.capsfilter = bin.get_by_name('capsfilter')
-        self.final_video_tee = bin.get_by_name('final_video_tee')
+        self.capsfilter         = bin.get_by_name('capsfilter')
+        self.final_video_tee    = bin.get_by_name('final_video_tee')
         self.video_output_queue = bin.get_by_name('video_output_queue')
+
         self._update_video_filter_caps()
+
         self.playsink.set_property('video-sink', bin)
 
     def create_audio_elements(self):
-        bin = Gst.parse_bin_from_description(
-            f'audiorate ! audioconvert ! audioresample ! {config.default_audio_caps()} ! ' +
-            'queue' + self.default_audio_pipeline_string_end(), True)
+        bin_as_string = f'audiorate ! audioconvert ! audioresample ! {config.default_audio_caps()} ! {self.default_audio_pipeline_string_end()}'
+        bin = Gst.parse_bin_from_description( bin_as_string, True )
+
+        self.final_audio_tee    = bin.get_by_name('final_audio_tee')
+        self.audio_output_queue = bin.get_by_name('audio_output_queue')
+
+
         self.playsink.set_property('audio-sink', bin)
-        self.final_audio_tee = bin.get_by_name('final_audio_tee')
 
     def on_pipeline_start(self):
         '''
@@ -94,7 +98,7 @@ class UriInput(Input):
         for connection in self.dest_connections():
             connection.unblock_intersrc_if_ready()
 
-        # If the user has asked ot start at a certain timespot, do it now
+        # If the user has asked ot start at a certain timestamp, do it now
         # (as the position cannot be set until the pipeline is PAUSED/PLAYING):
         self._handle_position_seek()
 

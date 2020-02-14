@@ -32,9 +32,7 @@ class HTMLInput(Input):
         if not config.enable_video():
             return
 
-        self.create_pipeline_from_string('cef url="' + self.uri + '" ! '
-                                         ' videoconvert ! video/x-raw,format=ARGB ! '
-                                         'queue ! ' + self.default_video_pipeline_string_end())
+        self.create_pipeline_from_string(f'cef url="{self.uri}" !  videoconvert ! video/x-raw,format=ARGB ! queue ! {self.default_video_pipeline_string_end()}')
 
         self.intervideosink = self.pipeline.get_by_name('intervideosink')
         self.final_video_tee = self.pipeline.get_by_name('final_video_tee')

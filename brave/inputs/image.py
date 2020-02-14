@@ -30,9 +30,11 @@ class ImageInput(Input):
             return
 
         # To crop (not resize): videobox autocrop=true border-alpha=0
-        pipeline_string = ('uridecodebin name=uridecodebin uri="' + self.uri +
-                           '" ! imagefreeze ! videoconvert ! video/x-raw,pixel-aspect-ratio=1/1,framerate=30/1 ! ' +
-                           self.default_video_pipeline_string_end())
+
+        pipeline_string = (f'uridecodebin name=uridecodebin uri="self.uri" ! '
+                           'imagefreeze ! videoconvert ! video/x-raw,pixel-aspect-ratio=1/1,framerate=30/1 ! '
+                           f'{self.default_video_pipeline_string_end()}')
+
         self.create_pipeline_from_string(pipeline_string)
         self.final_video_tee = self.pipeline.get_by_name('final_video_tee')
         self.uridecodebin = self.pipeline.get_by_name('uridecodebin')

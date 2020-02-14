@@ -125,7 +125,7 @@ class Input(InputOutputOverlay):
         if name is None:
             name = factory_name
         name = who_its_for.uid + '_' + name + '_' + str(random.randint(1, 1000000))
-        input_bin = getattr(self, 'final_' + audio_or_video + '_tee').parent
+        input_bin = getattr(self, f'final_{audio_or_video}_tee').parent
         e = Gst.ElementFactory.make(factory_name, name)
         if not input_bin.add(e):
             self.logger.error('Unable to add element %s' % factory_name)
