@@ -96,12 +96,12 @@ overlaysHandler.delete = function(overlay) {
     url: 'api/overlays/' + overlay.id,
     dataType: 'json',
     success: function() {
-      showMessage('Successfully deleted overlay ' + overlay.id);
+      showMessage('Successfully deleted overlay ' + overlay.id , 'success' );
       updatePage()
     },
     error: function(response) {
       showMessage(response.responseJSON && response.responseJSON.error ?
-        'Error deleting overlay: ' + response.responseJSON.error : 'Error deleting overlay')
+        'Error deleting overlay: ' + response.responseJSON.error : 'Error deleting overlay', 'danger' );
     }
   });
 };
@@ -267,22 +267,22 @@ overlaysHandler._handleFormSubmit = function () {
   const type = newProps.type || overlay.type;
 
   if ( !type ) {
-    showMessage('Please select a type');
+    showMessage('Please select a type', 'info' );
     return;
   }
 
   if ( ( type === 'text' || type === 'clock' ) && !newProps.valignment && !newProps.halignment ) {
-    showMessage('Please select a vertical alignment');
+    showMessage('Please select a vertical alignment', 'info' );
     return;
   }
 
   if ( ( type === 'effect' ) && !newProps.effect_name ) {
-    showMessage('Please select an effect');
+    showMessage('Please select an effect', 'info' );
     return;
   }
 
   if ( !Object.keys( newProps ).length ) {
-    showMessage('No new values');
+    showMessage('No new values', 'info' );
     return;
   }
 

@@ -338,7 +338,7 @@ function formGroup (details) {
   }
 
   else {
-    e.append(label);
+    e.append( label );
     const input = $(document.createElement('input'));
     input.addClass('form-control form-control-sm');
     const fields = ['min', 'max', 'step', 'name', 'type', 'id', 'value',
@@ -358,7 +358,7 @@ function formGroup (details) {
     }
   }
 
-  if (details.help) {
+  if ( details.help ) {
     const small = $(document.createElement('small'));
     small.addClass('form-text text-muted');
     small.html(details.help);
@@ -368,14 +368,14 @@ function formGroup (details) {
   return e;
 }
 
-function showModal (label, content, onSave) {
+function showModal ( label, content, onSave ) {
   $('#primary-modal').modal();
   $('#primary-modal h5').html(label);
   $('#primary-modal .modal-body').html(content);
 
   if ( onSave ) {
     const saveButton = $('<button type="submit" class="btn btn-success save-button">Save</button>');
-    saveButton.click(onSave);
+    saveButton.click( onSave );
     $('#primary-modal .modal-footer')
       .empty()
       .append(saveButton)
@@ -458,7 +458,7 @@ function submitCreateOrEdit ( blockType, id, values ) {
       if (response.responseJSON && response.responseJSON.error) {
         msg += ': ' + response.responseJSON.error
       }
-      showMessage ( msg, 'warning' );
+      showMessage ( msg, 'danger' );
     }
   });
 }

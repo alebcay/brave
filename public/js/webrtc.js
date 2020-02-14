@@ -119,7 +119,7 @@ const handleDataChannelClose = (event) =>{
 };
 
 function errorUserMediaHandler() {
-  showMessage('WebRTC not suppoeted by this browser', 'warning');
+  showMessage('WebRTC not supported by this browser', 'warning');
 }
 
 function onDataChannel(event) {

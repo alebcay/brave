@@ -61,18 +61,18 @@ mixersHandler._mixerCardBody = (mixer) => {
     return details
 };
 
-mixersHandler._sendMixerCommand = function(mixer, source, command) {
+mixersHandler._sendMixerCommand = function ( mixer, source, command ) {
     $.ajax({
         type: 'POST',
         url: 'api/mixers/' + mixer.id + '/' + command,
         dataType: 'json',
         data: JSON.stringify({uid:source.uid}),
         success: function() {
-            showMessage('Success in ' + command + ' for ' + source.uid + ' to ' + mixer.uid);
+            showMessage( `Success in ${command} for ${source.uid} to ${mixer.uid}`, 'success' );
             updatePage()
         },
         error: function() {
-            showMessage('Sorry, an error occurred')
+            showMessage( 'Sorry, an error occurred', 'danger' );
         }
     });
 };
@@ -127,18 +127,18 @@ mixersHandler.create = () => {
     submitCreateOrEdit('mixer', null, {})
 };
 
-mixersHandler.delete = function(mixer) {
+mixersHandler.delete = function ( mixer ) {
     $.ajax({
         contentType: "application/json",
         type: 'DELETE',
         url: 'api/mixers/' + mixer.id,
         dataType: 'json',
         success: function() {
-            showMessage('Successfully deleted mixer ' + mixer.id, 'success');
+            showMessage( `Successfully deleted mixer ${mixer.id}`, 'success' );
             updatePage()
         },
         error: function() {
-            showMessage('Sorry, an error occurred while deleting mixer ' + mixer.id, 'danger')
+            showMessage( `Sorry, an error occurred while deleting mixer ${mixer.id}`, 'danger' );
         }
     });
     return false
