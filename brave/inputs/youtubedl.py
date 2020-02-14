@@ -139,8 +139,13 @@ class YoutubeDLInput( Input ):
         #is_rtmp = self.suri.startswith('rtmp')
         #playbin_element = 'playbin' if is_rtmp else 'playbin'
 
-        playbin_element = 'playbin'
-        self.create_pipeline_from_string(playbin_element)
+        if hasattr( self, suri ):
+            is_rtmp = self.suri.startswith('rtmp')
+            playbin_element = 'playbin' if is_rtmp else 'playbin3'
+        else:
+            playbin_element = 'playbin'
+
+        self.create_pipeline_from_string( playbin_element )
 
         self.playsink = self.pipeline.get_by_name('playsink')
         self.playbin = self.playsink.parent
@@ -158,33 +163,37 @@ class YoutubeDLInput( Input ):
         else:
             self._create_fake_audio()
 
-    def _create_fake_video(self):
+    def _create_fake_video( self ):
         fakesink = Gst.ElementFactory.make('fakesink')
         self.playsink.set_property('video-sink', fakesink)
 
-    def _create_fake_audio(self):
+    def _create_fake_audio( self ):
         fakesink = Gst.ElementFactory.make('fakesink')
         self.playsink.set_property('audio-sink', fakesink)
 
     def create_video_elements(self):
-        bin_as_string = ( 'videoconvert ! videoscale ! capsfilter name=capsfilter ! queue ! ' + self.default_video_pipeline_string_end() )
-        bin = Gst.parse_bin_from_description(bin_as_string, True)
+        bin_as_string = ( f'videoconvert ! videoscale ! capsfilter name=capsfilter ! {self.default_video_pipeline_string_end()}' )
+        bin = Gst.parse_bin_from_description( bin_as_string, True )
 
-        self.capsfilter = bin.get_by_name('capsfilter')
-        self.final_video_tee = bin.get_by_name('final_video_tee')
-        self.video_output_queue = bin.get_by_name('video_output_queue')
+        self.capsfilter         = bin.get_by_name( 'capsfilter' )
+        self.final_video_tee    = bin.get_by_name( 'final_video_tee' )
+        self.video_output_queue = bin.get_by_name( 'video_output_queue' )
+
         self._update_video_filter_caps()
-        self.playsink.set_property('video-sink', bin)
+
+        self.playsink.set_property( 'video-sink', bin )
 
     def create_audio_elements(self):
-        bin = Gst.parse_bin_from_description(
-            f'audiorate ! audioconvert ! audioresample ! {config.default_audio_caps()} ! ' +
-            'queue' + self.default_audio_pipeline_string_end(), True)
-        self.playsink.set_property('audio-sink', bin)
-        self.final_audio_tee = bin.get_by_name('final_audio_tee')
+        bin_as_string = ( f'audiorate ! audioconvert ! audioresample ! {config.default_audio_caps()} ! ${self.default_audio_pipeline_string_end()}' )
+        bin = Gst.parse_bin_from_description( bin_as_string, True )
 
-    def has_video(self):
-        return False if self.disablevideo else config.enable_video()
+        self.final_audio_tee    = bin.get_by_name( 'final_audio_tee' )
+        self.audio_output_queue = bin.get_by_name( 'audio_output_queue' )
+
+        self.playsink.set_property( 'audio-sink', bin )
+
+    #def has_video(self):
+    #    return False if self.disablevideo else config.enable_video()
 
     def on_pipeline_start(self):
         '''
@@ -201,16 +210,16 @@ class YoutubeDLInput( Input ):
         '''
         If the user has provided a position to seek to, this method handles it.
         '''
-        if hasattr(self, 'position') and self.state in [Gst.State.PLAYING, Gst.State.PAUSED]:
+        if hasattr( self, 'position' ) and self.state in [Gst.State.PLAYING, Gst.State.PAUSED]:
             try:
-                new_position = float(self.position)
-                if self.pipeline.seek_simple(Gst.Format.TIME, Gst.SeekFlags.FLUSH, new_position):
-                    self.logger.debug('Successfully updated position to %s' % new_position)
+                new_position = float( self.position )
+                if self.pipeline.seek_simple( Gst.Format.TIME, Gst.SeekFlags.FLUSH, new_position ):
+                    self.logger.debug( 'Successfully updated position to %s' % new_position )
                 else:
-                    self.logger.warning('Unable to set position to %s' % new_position)
+                    self.logger.warning( 'Unable to set position to %s' % new_position )
             except ValueError:
-                self.logger.warning('Invalid position %s provided' % self.position)
-            delattr(self, 'position')
+                self.logger.warning( 'Invalid position %s provided' % self.position )
+            delattr( self, 'position' )
 
     def get_input_cap_props(self):
         '''
@@ -218,13 +227,16 @@ class YoutubeDLInput( Input ):
         This allows the height/width/framerate/audio_rate to be retrieved.
         '''
         elements = {}
+
         if hasattr(self, 'intervideosink'):
             elements['video'] = self.intervideosink
+
         if hasattr(self, 'interaudiosink'):
             elements['audio'] = self.interaudiosink
 
         props = {}
-        for (audioOrVideo, element) in elements.items():
+        for ( audioOrVideo, element ) in elements.items():
+
             if not element:
                 MyLogger.error('YT-dl missing element!')
                 return
@@ -241,15 +253,20 @@ class YoutubeDLInput( Input ):
 
             structure = caps.get_structure(0)
             props[audioOrVideo + '_caps_string'] = structure.to_string()
+
             if structure.has_field('framerate'):
                 framerate = structure.get_fraction('framerate')
                 props['framerate'] = framerate.value_numerator / framerate.value_denominator
+
             if structure.has_field('height'):
                 props['height'] = structure.get_int('height').value
+
             if structure.has_field('width'):
                 props['width'] = structure.get_int('width').value
+
             if structure.has_field('channels'):
                 props[audioOrVideo + '_channels'] = structure.get_int('channels').value
+
             if structure.has_field('rate'):
                 props[audioOrVideo + '_rate'] = structure.get_int('rate').value
 
@@ -279,14 +296,12 @@ class YoutubeDLInput( Input ):
         Adds buffering stats to the summary
         '''
         s = super().summarise(for_config_file)
-        global channel_val
-        global format_val
 
         if not for_config_file:
-            #s['channel'] = channel_val
             buffering_stats = self.get_buffering_stats()
             if buffering_stats:
                 s['buffering_percent'] = buffering_stats.percent
+
         return s
 
     def on_buffering(self, buffering_percent):

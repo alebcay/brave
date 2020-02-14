@@ -88,6 +88,7 @@ class Input(InputOutputOverlay):
         caps_string = self._create_caps_string()
         if caps_string is None:
             return
+
         self.logger.debug('New caps: ' + caps_string)
         new_caps = Gst.Caps.from_string(caps_string)
 
@@ -109,12 +110,12 @@ class Input(InputOutputOverlay):
     def default_video_pipeline_string_end(self):
         # A tee is used so that we can connect this input to multiple mixers/outputs
         # The fakesink with sync=true ensures the stream acts as a live stream even with no connections.
-        return ('queue name=video_output_queue ! tee name=final_video_tee allow-not-linked=true '
-                'final_video_tee. ! queue ! fakesink sync=true')
+        return (' queue name=video_output_queue ! tee name=final_video_tee allow-not-linked=true'
+                ' final_video_tee. ! queue ! fakesink sync=true' )
 
     def default_audio_pipeline_string_end(self):
-        return (' ! queue name=audio_output_queue ! tee name=final_audio_tee allow-not-linked=true '
-                'final_audio_tee. ! queue ! fakesink sync=true')
+        return (' queue name=audio_output_queue ! tee name=final_audio_tee allow-not-linked=true'
+                ' final_audio_tee. ! queue ! fakesink sync=true' )
 
     def add_element(self, factory_name, who_its_for, audio_or_video, name=None):
         '''
