@@ -72,20 +72,24 @@ components.card = (block) => {
     .append(cardBody);
 
   return $('<div class="block-card-outer col-xl-3 col-lg-4 col-md-6 col-12"></div>')
-    .append(card)
+    .append( card )
 };
 
-components.stateBox = (item, onClick) => {
-  const stateBoxDetails = components._stateIcons(item);
+components.stateBox = ( item, onClick ) => {
+  const stateBoxDetails = components._stateIcons( item );
+
   stateBoxDetails.value.click( change => {
     const state = change.target.dataset.state;
-    onClick(item .id, state );
+    if ( state ) onClick(item.id, state );
     return false;
   });
+
   let msg = stateBoxDetails.value;
+
   if (item.position) msg.append(' ', prettyDuration(item.position));
+
   return $('<div></div>')
-    .append(msg)
+    .append( msg )
     .addClass(stateBoxDetails.className)
 };
 
@@ -133,42 +137,53 @@ components.volumeInput = (volume) => {
 components.hideDetails = () => '<i class="fas fa-caret-down"></i> Hide details';
 components.showDetails = () => '<i class="fas fa-caret-right"></i> Show details';
 
-components.getMixOptions = (src) => {
+components.getMixOptions = ( src ) => {
   return mixersHandler.items
-    .map(mixer => {
-      if (!mixer.sources) return;
-      if (src === mixer) return;
-      const foundThis = mixer.sources.find(x => x.uid === src.uid);
+    .map( mixer => {
+      if ( !mixer.sources ) return;
+      if ( src === mixer ) return;
+
+      const foundThis = mixer.sources.find( x => x.uid === src.uid );
       const inMix = foundThis && foundThis.in_mix ? 'In mix' : 'Not in mix';
       const div = $('<div class="mix-option"></div>');
+
       if (foundThis && foundThis.in_mix) {
+
         div.addClass('mix-option-showing');
+
         const removeButton = components.removeButton();
+
         removeButton.click(() => {
-          mixersHandler.remove(mixer, src);
+          mixersHandler.remove( mixer, src );
           return false;
         });
+
         const buttons = $('<div class="option-icons"></div>');
-        buttons.append([removeButton]);
-        div.append(buttons)
+        buttons.append( [removeButton] );
+        div.append( buttons );
+
       }
+
       else {
         div.addClass('mix-option-hidden');
         const cutButton = components.cutButton();
         cutButton.click(() => {
-          mixersHandler.cut(mixer, src);
+          mixersHandler.cut( mixer, src );
           return false;
         });
 
         const overlayButton = components.overlayButton();
         overlayButton.click(() => {
-          mixersHandler.overlay(mixer, src);
+          mixersHandler.overlay( mixer, src );
           return false;
         });
+
         const buttons = $('<div class="option-icons"></div>');
+
         buttons.append([cutButton, overlayButton]);
-        div.append(buttons)
+        div.append(buttons);
       }
+
       div.append(`<strong>Mixer ${mixer.id}:</strong> ${inMix}`);
       return div
     })
