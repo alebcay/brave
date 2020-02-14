@@ -139,7 +139,9 @@ class YoutubeDLInput( Input ):
         #is_rtmp = self.suri.startswith('rtmp')
         #playbin_element = 'playbin' if is_rtmp else 'playbin'
 
-        if hasattr( self, 'suri' ):
+        allow_playbin3 = False
+
+        if hasattr( self, 'suri' ) and allow_playbin3:
             is_rtmp = self.suri.startswith('rtmp')
             playbin_element = 'playbin' if is_rtmp else 'playbin3'
         else:
@@ -172,7 +174,7 @@ class YoutubeDLInput( Input ):
         self.playsink.set_property('audio-sink', fakesink)
 
     def create_video_elements(self):
-        bin_as_string = f'capsfilter ! videoconvert ! videoscale ! capsfilter name=capsfilter ! queue ! {self.default_video_pipeline_string_end()}'
+        bin_as_string = f'videoconvert ! videoscale ! capsfilter name=capsfilter ! queue ! {self.default_video_pipeline_string_end()}'
         bin = Gst.parse_bin_from_description( bin_as_string, True )
 
         self.capsfilter         = bin.get_by_name( 'capsfilter' )
