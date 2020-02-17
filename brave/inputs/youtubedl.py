@@ -74,12 +74,21 @@ class YoutubeDLInput( Input ):
                 'type': 'str',
                 'default': 'no format set',
             },
-            'fps': {},
-            'categories': {},
-            'thumbnail': {},
-            'view_count': { 'default': 0 },
-            'format_note': { 'default': 'none' },
-            'protocol': { 'default': 'none' },
+            'fps': {
+            },
+            'categories': {
+            },
+            'thumbnail': {
+            },
+            'view_count': {
+                'default': 0
+            },
+            'format_note': {
+                'default': 'none'
+            },
+            'protocol': {
+                'default': 'none'
+             },
         }
 
 
@@ -95,7 +104,7 @@ class YoutubeDLInput( Input ):
         self.suri = ''
 
         # Filter for just audio formats when video is disabled
-        ytFormats = 'best[height<=720][fps<=30]/best[height<=720][fps<=?30]/best[height<=720][fps<=?30]/best[height<=720]'
+        ytFormats = 'best[height<=720][fps<=30]/best[height<=1080][fps<=?30]/best]'
 
         ydl_opts = {
             'format'     : ytFormats,
@@ -105,31 +114,34 @@ class YoutubeDLInput( Input ):
             'logger'     : MyLogger(),
         }
 
-
+        try:
         with youtube_dl.YoutubeDL( ydl_opts ) as ydl:
 
-            ydl.download( [ self.uri ] )
+              global ytdl_url
 
-            meta = ydl.extract_info ( self.uri, download=False )
+              ydl.download( [ self.uri ] )
 
-            global ytdl_url
+              meta = ydl.extract_info ( self.uri, download=False )
 
-            ytdl_url = meta.get( 'url' )
-            self.stream = ytdl_url
-            self.suri = ytdl_url
+              ytdl_url = meta.get( 'url' )
+              self.stream = ytdl_url
+              self.suri = ytdl_url
 
-            global channel_val
-            channel_val = meta.get( 'uploader' )
-            self.channel = channel_val
+              global channel_val
+              channel_val = meta.get( 'uploader' )
+              self.channel = channel_val
 
-            self.format      = meta.get( 'format' )
-            self.title       = meta.get( 'title' )
-            self.fps         = meta.get( 'fps' )
-            self.categories  = meta.get( 'categories' )
-            self.thumbnail   = meta.get( 'thumbnail' )
-            self.view_count  = meta.get( 'view_count' )
-            self.format_note = meta.get( 'format_note' )
-            self.protocol    = meta.get( 'protocol' )
+              self.format      = meta.get( 'format' )
+              self.title       = meta.get( 'title' )
+              self.fps         = meta.get( 'fps' )
+              self.categories  = meta.get( 'categories' )
+              self.thumbnail   = meta.get( 'thumbnail' )
+              self.view_count  = meta.get( 'view_count' )
+              self.format_note = meta.get( 'format_note' )
+              self.protocol    = meta.get( 'protocol' )
+        except e:
+            print ( e )
+            pass
 
 
         global purl
