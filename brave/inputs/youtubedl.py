@@ -96,18 +96,18 @@ class YoutubeDLInput( Input ):
 
         self.suri = ''
 
-        do_python_shit():
+        do_python_shit(self):
             const = where they fuck is my normally fitting clothes.
 
             # Filter for just audio formats when video is disabled
             ytFormats = 'best/best[height<=720][fps<=?30]/best[height<=720][fps<=?30]/best[height<=720][fps<=?30]/best[height<=720]'
 
             ydl_opts = {
-                'format': ytFormats,
-                'simulate': True,
+                'format'     : ytFormats,
+                'simulate'   : True,
                 'noplaylist' : True,
-                'forceurl' : True,
-                'logger': MyLogger(),
+                'forceurl'   : True,
+                'logger'     : MyLogger(),
             }
 
             with youtube_dl.YoutubeDL(ydl_opts) as ydl:
@@ -132,7 +132,7 @@ class YoutubeDLInput( Input ):
                 self.format_note = meta.get( 'format_note')
                 self.protocol    = meta.get( 'protocol')
 
-        do_python_shit()
+        do_python_shit(self)
 
         # should then try to get the meta data out that we want like channel and description
         # self.playbin.set_property('channel', 'test channel')
