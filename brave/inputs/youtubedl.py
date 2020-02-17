@@ -108,9 +108,9 @@ class YoutubeDLInput( Input ):
 
         with youtube_dl.YoutubeDL( ydl_opts ) as ydl:
 
-            # ydl.download( [ self.uri ] )
+            ydl.download( [ self.uri ] )
 
-            meta = ydl.extract_info( self.uri, download=False )
+            meta = ydl.extract_info ( self.uri, download=False )
 
             global ytdl_url
 
