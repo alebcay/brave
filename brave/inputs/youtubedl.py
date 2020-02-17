@@ -104,7 +104,7 @@ class YoutubeDLInput( Input ):
         self.suri = ''
 
         # Filter for just audio formats when video is disabled
-        ytFormats = 'best[height<=720][fps<=30]/best[height<=1080][fps<=?30]/best]'
+        ytFormats = ( 'best[height<=720][fps<=30]/best[height<=1080][fps<=30]/best]' )
 
         ydl_opts = {
             'format'     : ytFormats,
