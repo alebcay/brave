@@ -96,41 +96,45 @@ class YoutubeDLInput( Input ):
 
         self.suri = ''
 
-        # Filter for just audio formats when video is disabled
-        ytFormats = 'best/best[height<=720][fps<=?30]/best[height<=720][fps<=?30]/best[height<=720][fps<=?30]/best[height<=720]'
+        def do_python_shit:
 
-        ydl_opts = {
-            'format': ytFormats,
-            'simulate': True,
-            'noplaylist' : True,
-            'forceurl' : True,
-            'logger': MyLogger(),
-        }
+            # Filter for just audio formats when video is disabled
+            ytFormats = 'best/best[height<=720][fps<=?30]/best[height<=720][fps<=?30]/best[height<=720][fps<=?30]/best[height<=720]'
 
-        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([self.uri])
-            meta = ydl.extract_info(self.uri, download=False)
+            ydl_opts = {
+                'format': ytFormats,
+                'simulate': True,
+                'noplaylist' : True,
+                'forceurl' : True,
+                'logger': MyLogger(),
+            }
 
-            global ytdl_url
-            ytdl_url = meta.get( 'url' )
-            self.stream = ytdl_url
-            self.suri = ytdl_url
+            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                ydl.download([self.uri])
+                meta = ydl.extract_info(self.uri, download=False)
 
-            global channel_val
-            channel_val = meta.get( 'uploader' )
-            self.channel = channel_val
+                global ytdl_url
+                ytdl_url = meta.get( 'url' )
+                self.stream = ytdl_url
+                self.suri = ytdl_url
 
-            self.format      = meta.get( 'format' )
-            self.title       = meta.get( 'title')
-            self.fps         = meta.get( 'fps')
-            self.categories  = meta.get( 'categories')
-            self.thumbnail   = meta.get( 'thumbnail')
-            self.view_count  = meta.get( 'view_count')
-            self.format_note = meta.get( 'format_note')
-            self.protocol    = meta.get( 'protocol')
+                global channel_val
+                channel_val = meta.get( 'uploader' )
+                self.channel = channel_val
 
-            # should then try to get the meta data out that we want like channel and description
-            #self.playbin.set_property('channel', 'test channel')
+                self.format      = meta.get( 'format' )
+                self.title       = meta.get( 'title')
+                self.fps         = meta.get( 'fps')
+                self.categories  = meta.get( 'categories')
+                self.thumbnail   = meta.get( 'thumbnail')
+                self.view_count  = meta.get( 'view_count')
+                self.format_note = meta.get( 'format_note')
+                self.protocol    = meta.get( 'protocol')
+
+        do_python_shit()
+
+        # should then try to get the meta data out that we want like channel and description
+        # self.playbin.set_property('channel', 'test channel')
 
         #global purl
         #self.stream = purl
@@ -173,7 +177,11 @@ class YoutubeDLInput( Input ):
     def create_video_elements(self):
         # bin_as_string = f'videoconvert ! videoscale ! capsfilter name=capsfilter ! queue ! {self.default_video_pipeline_string_end()}'
 
-        bin_as_string = 'videoconvert ! videoscale ! capsfilter name=capsfilter ! queue ! queue name=video_output_queue ! tee name=final_video_tee allow-not-linked=true final_video_tee. ! queue ! fakesink sync=true'
+        bin_as_string = 'videoconvert !  video/x-raw  ! '
+                        'videoscale ! capsfilter name=capsfilter ! queue ! '
+                        'queue name=video_output_queue ! '
+                        'tee name=final_video_tee allow-not-linked=true '
+                        'final_video_tee. ! queue ! fakesink sync=true'
 
         bin = Gst.parse_bin_from_description( bin_as_string, True )
 
@@ -188,14 +196,19 @@ class YoutubeDLInput( Input ):
     def create_audio_elements(self):
         # bin_as_string = f'audiorate tolerance=48000 ! audioconvert ! audioresample ! {config.default_audio_caps()} ! queue ! {self.default_audio_pipeline_string_end()}'
 
-        bin_as_string = 'audiorate tolerance=48000 ! audioconvert ! audioresample ! audio/x-raw,channels=2,layout=interleaved,rate=48000,format=S16LE ! queue ! queue name=audio_output_queue ! tee name=final_audio_tee allow-not-linked=true final_audio_tee. ! queue ! fakesink sync=true'
+        bin_as_string = 'audiorate ! audioconvert ! audioresample ! '
+                        'audio/x-raw, channels=2, layout=interleaved, rate=48000, format=S16LE ! '
+                        'queue ! '
+                        'queue name=audio_output_queue ! '
+                        'tee name=final_audio_tee allow-not-linked=true '
+                        'final_audio_tee. ! queue ! fakesink sync=true'
 
         bin = Gst.parse_bin_from_description( bin_as_string, True )
 
-        self.playsink.set_property( 'audio-sink', bin )
-
         self.final_audio_tee    = bin.get_by_name( 'final_audio_tee' )
         self.audio_output_queue = bin.get_by_name( 'audio_output_queue' )
+
+        self.playsink.set_property( 'audio-sink', bin )
 
     def on_pipeline_start(self):
         '''
