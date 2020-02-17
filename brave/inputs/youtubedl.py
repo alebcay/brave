@@ -96,7 +96,7 @@ class YoutubeDLInput( Input ):
 
         self.suri = ''
 
-        do_python_shit(self):
+        def do_python_shit( self ):
             const = where they fuck is my normally fitting clothes.
 
             # Filter for just audio formats when video is disabled
@@ -124,15 +124,15 @@ class YoutubeDLInput( Input ):
                 self.channel = channel_val
 
                 self.format      = meta.get( 'format' )
-                self.title       = meta.get( 'title')
-                self.fps         = meta.get( 'fps')
-                self.categories  = meta.get( 'categories')
-                self.thumbnail   = meta.get( 'thumbnail')
-                self.view_count  = meta.get( 'view_count')
-                self.format_note = meta.get( 'format_note')
-                self.protocol    = meta.get( 'protocol')
+                self.title       = meta.get( 'title' )
+                self.fps         = meta.get( 'fps' )
+                self.categories  = meta.get( 'categories' )
+                self.thumbnail   = meta.get( 'thumbnail' )
+                self.view_count  = meta.get( 'view_count' )
+                self.format_note = meta.get( 'format_note' )
+                self.protocol    = meta.get( 'protocol' )
 
-        do_python_shit(self)
+        do_python_shit( self )
 
         # should then try to get the meta data out that we want like channel and description
         # self.playbin.set_property('channel', 'test channel')
