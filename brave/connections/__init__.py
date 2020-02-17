@@ -39,7 +39,7 @@ class ConnectionCollection(AbstractCollection):
         return next((x for x in self._items.values() if x.dest == dest), None)
 
     def get_all_for_dest(self, dest):
-        return list(filter(lambda x: x.dest == dest, self._items.values()))
+        return list ( filter ( lambda x: x.dest == dest, self._items.values() ) )
 
     def get_connection_between_source_and_dest(self, source, dest):
         return next((x for x in self._items.values() if (x.source == source and x.dest == dest)), None)

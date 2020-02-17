@@ -104,7 +104,7 @@ class YoutubeDLInput( Input ):
         self.suri = ''
 
         # Filter for just audio formats when video is disabled
-        ytFormats = ( 'best[height<=720][fps<=30]/best[height<=1080][fps<=30]/best]' )
+        ytFormats = ( 'best[height<=720][fps<=30]/best[height<=1080][fps<=30]/best' )
 
         ydl_opts = {
             'format'     : ytFormats,
@@ -167,11 +167,13 @@ class YoutubeDLInput( Input ):
         self.playbin.set_property( 'uri', self.suri )
         self.playbin.connect( 'about-to-finish', self.__on_about_to_finish )
 
+        # Create video pipeline
         if config.enable_video():
             self.create_video_elements()
         else:
             self._create_fake_video()
 
+        # Create audio pipeline
         if config.enable_audio():
             self.create_audio_elements()
         else:

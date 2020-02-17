@@ -16,7 +16,7 @@ class Mixer(InputOutputOverlay):
         args['type'] = 'mixer'
         super().__init__(**args)
         self.mixer_element = {}
-        self.request_pad_count = {'video': 0, 'audio': 0}
+        self.request_pad_count = { 'video': 0, 'audio': 0 }
         self.create_elements()
 
         self.setup_complete = True
