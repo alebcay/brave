@@ -95,7 +95,7 @@ class YoutubeDLInput( Input ):
         self.suri = ''
 
         # Filter for just audio formats when video is disabled
-        ytFormats = 'best/best[height<=720][fps<=?30]/best[height<=720][fps<=?30]/best[height<=720][fps<=?30]/best[height<=720]'
+        ytFormats = 'best[height<=720][fps<=30]/best[height<=720][fps<=?30]/best[height<=720][fps<=?30]/best[height<=720]'
 
         ydl_opts = {
             'format'     : ytFormats,
@@ -196,8 +196,8 @@ class YoutubeDLInput( Input ):
     def create_audio_elements( self ):
         # bin_as_string = f'audiorate tolerance=48000 ! audioconvert ! audioresample ! {config.default_audio_caps()} ! queue ! {self.default_audio_pipeline_string_end()}'
 
-        bin_as_string = ( 'audiorate ! audioconvert ! audioresample ! '
-                          'audio/x-raw, channels=2, layout=interleaved, rate=48000, format=S16LE ! '
+        bin_as_string = ( 'audioconvert ! audioresample ! autoaudiosink ! '
+                          'audio/x-raw, channels = 2, rate=41000, format=S16LE ! '
                           'queue ! '
                           'queue name=audio_output_queue ! '
                           'tee name=final_audio_tee allow-not-linked=true '

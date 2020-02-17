@@ -259,7 +259,7 @@ overlaysHandler._handleFormSubmit = function () {
   ];
   fields.forEach(f => {
     let overlay = form.find( `[name="${f}"]` );
-    if (overlay && overlay.val() != null) {
+    if ( overlay && overlay.val() != null ) {
       newProps[f] = overlay.val()
     }
   });
@@ -285,6 +285,15 @@ overlaysHandler._handleFormSubmit = function () {
     showMessage('No new values', 'info' );
     return;
   }
+
+  const outline = form.find('[name="outline"]');
+  if ( outline && outline.length > 0 ) newProps.outline = outline.is( ':checked' );
+
+  const shadow = form.find('[name="shadow"]');
+  if (shadow && shadow.length > 0) newProps.shadow = shadow.is( ':checked' );
+
+  const shaded_background = form.find('[name="shaded_background"]');
+  if (shaded_background && shaded_background.length > 0) newProps.shaded_background = shaded_background.is( ':checked' );
 
   if ( newProps.source === 'none' ) newProps.source = null;
   submitCreateOrEdit('overlay', id, newProps);

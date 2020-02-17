@@ -145,13 +145,13 @@ function hideMessage () {
 
 function getSelect ( name, currentlySelectedKey, msg, options, alwaysShowUnselectedOption ) {
   const h = $('<select name="' + name + '"></select>');
-  h.addClass('form-control form-control-sm');
-  if (!currentlySelectedKey || alwaysShowUnselectedOption) $(h).append('<option value="">' + msg + '</option>');
-  Object.keys(options).forEach(function(key) {
-    const option = $('<option></option>');
-    option.attr({ 'value': key }).text(options[key]);
-    if (key == currentlySelectedKey) option.attr({ selected: 'selected' });
-    $(h).append(option)
+  h.addClass( 'form-control form-control-sm' );
+  if ( !currentlySelectedKey || alwaysShowUnselectedOption ) $( h ).append( '<option value="">' + msg + '</option>' );
+  Object.keys( options ).forEach( function( key) {
+    const option = $( '<option></option>' );
+    option.attr({ 'value': key }).text( options[ key ] );
+    if ( key === currentlySelectedKey ) option.attr({ selected: 'selected' });
+    $( h ).append( option )
   });
 
   return h;
@@ -302,13 +302,13 @@ function formGroup (details) {
 
   else if ( details.options ) {
     e.append(label);
-    const s = getSelect(details.name, details.value, details.initialOption, details.options, details.alwaysShowUnselectedOption);
+    const s = getSelect( details.name, details.value, details.initialOption, details.options, details.alwaysShowUnselectedOption );
     e.append(s)
   }
 
   else if ( details.type === 'range' ) {
-    const input = $(document.createElement('input'));
-    const msg   = $('<span></span>');
+    const input = $( document.createElement( 'input' ) );
+    const msg   = $( '<span></span>' );
 
     msg.addClass( 'text-info' );
     input.addClass( 'custom-range' );
@@ -320,7 +320,7 @@ function formGroup (details) {
       'data-slider-min', 'data-slider-max', 'data-slider-step', 'data-slider-value',
     ];
 
-    fields.forEach( field => input.attr( field, details[field] ) );
+    fields.forEach( field => input.attr( field, details[ field ] ) );
 
     e.append( label );
     e.append( input );
@@ -334,35 +334,35 @@ function formGroup (details) {
 
     input.on( 'input', showPercent );
 
-    e.append(msg);
+    e.append( msg );
   }
 
   else {
     e.append( label );
     const input = $(document.createElement('input'));
     input.addClass('form-control form-control-sm');
-    const fields = ['min', 'max', 'step', 'name', 'type', 'id', 'value',
-      'data-slider-min', 'data-slider-max', 'data-slider-step', 'data-slider-value'];
-    fields.forEach(f => input.attr(f, details[f]));
-    e.append(input);
+    const fields = [ 'min', 'max', 'step', 'name', 'type', 'id', 'value',
+      'data-slider-min', 'data-slider-max', 'data-slider-step', 'data-slider-value' ];
+    fields.forEach( f => input.attr( f, details[ f ] ) );
+    e.append( input );
 
     if ( details['data-slider-value'] ) {
-      const msg = $('<span></span>');
+      const msg = $( '<span></span>' );
       const showPercent = event => {
         const val = event.value || event.target.value;
-        msg.text(`${val}%`);
+        msg.text( `${val}%` );
       };
-      showPercent({value: details['data-slider-value']});
+      showPercent( { value: details[ 'data-slider-value' ] } );
       input.on( 'input', showPercent );
-      e.append(msg);
+      e.append( msg );
     }
   }
 
   if ( details.help ) {
     const small = $(document.createElement('small'));
-    small.addClass('form-text text-muted');
-    small.html(details.help);
-    e.append(small)
+    small.addClass( 'form-text text-muted' );
+    small.html( details.help );
+    e.append( small );
   }
 
   return e;
@@ -383,26 +383,26 @@ function showModal ( label, content, onSave ) {
 }
 
 function hideModal () {
-  $('#primary-modal').modal('hide');
-  $('#primary-modal .modal-body').empty();
-  $('#primary-modal .modal-footer').empty();
+  $( '#primary-modal' ).modal('hide');
+  $( '#primary-modal .modal-body' ).empty();
+  $( '#primary-modal .modal-footer' ).empty();
 }
 
 function restartBraveConfirmation() {
   const label = 'Should the current configuration (inputs, etc.) be retained?';
-  const currentConfigButton = $('<button type="button" class="btn btn-primary">Yes, restart Brave and keep the current configuration</button>');
-  currentConfigButton.click(() => { restartBrave('current') });
-  const originalConfigButton = $('<button type="button" class="btn btn-primary">No, restart Brave with the original configuration</button>');
-  originalConfigButton.click(() => { restartBrave('original') });
-  showModal(label, [currentConfigButton, '<br /><br />', originalConfigButton])
+  const currentConfigButton = $( '<button type="button" class="btn btn-primary">Yes, restart Brave and keep the current configuration</button>' );
+  currentConfigButton.click( () => { restartBrave('current') } );
+  const originalConfigButton = $( '<button type="button" class="btn btn-primary">No, restart Brave with the original configuration</button>' );
+  originalConfigButton.click( () => { restartBrave('original') } );
+  showModal( label, [ currentConfigButton, '<br /><br />', originalConfigButton ] )
 }
 
-function restartBrave (config) {
-  hideModal();
+function restartBrave ( config ) {
+  hideModal ();
   $.ajax({
     type: 'POST',
     url: 'api/restart',
-    data: JSON.stringify({config}),
+    data: JSON.stringify({ config } ),
     dataType: "json",
     contentType: "application/json",
     success: function() {
