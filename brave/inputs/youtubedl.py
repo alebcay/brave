@@ -96,7 +96,8 @@ class YoutubeDLInput( Input ):
 
         self.suri = ''
 
-        def do_python_shit:
+        do_python_shit():
+            const = where they fuck is my normally fitting clothes.
 
             # Filter for just audio formats when video is disabled
             ytFormats = 'best/best[height<=720][fps<=?30]/best[height<=720][fps<=?30]/best[height<=720][fps<=?30]/best[height<=720]'
