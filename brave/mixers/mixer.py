@@ -162,6 +162,7 @@ class Mixer(InputOutputOverlay):
 
         if config.enable_audio():
             self.mixer_element['audio'] = self.pipeline.get_by_name('audio_mixer')
+            self.audio_capsfilter = self.pipeline.get_by_name('audio_capsfilter');
             self.audio_output_queue = self.pipeline.get_by_name('audio_output_queue')
             self.final_audio_tee = self.pipeline.get_by_name('final_audio_tee')
 
