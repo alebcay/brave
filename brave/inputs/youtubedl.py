@@ -198,7 +198,7 @@ class YoutubeDLInput( Input ):
 
         bin_as_string = ( 'audioconvert ! audioresample ! '
                           'audio/x-raw, channels = 2, rate=41000, format=S16LE ! '
-                          'autoaudiosink ! queue ! '
+                          ' queue ! '
                           'queue name=audio_output_queue ! '
                           'tee name=final_audio_tee allow-not-linked=true '
                           'final_audio_tee. ! queue ! fakesink sync=true' )
