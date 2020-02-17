@@ -93,10 +93,11 @@ class YoutubeDLInput( Input ):
         # See: http://gstreamer-devel.966125.n4.nabble.com/Behavior-differences-between-decodebin3-and-decodebin-and-vtdec-hw-not-working-on-OSX-td4680895.html
         # should do a check of the url by passing it through the stream link script
         # https://github.com/ytdl-org/youtube-dl/blob/master/README.md#embedding-youtube-dl
+
         self.suri = ''
 
         # Filter for just audio formats when video is disabled
-        ytFormats = 'best[height<=720][fps<=?30][ext=webm]/best[height<=720][fps<=?30][ext=mp4]/best[height<=720][fps<=?30]/best[height<=720]/best'
+        ytFormats = 'best/best[height<=720][fps<=?30]/best[height<=720][fps<=?30]/best[height<=720][fps<=?30]/best[height<=720]'
 
         ydl_opts = {
             'format': ytFormats,
@@ -135,10 +136,6 @@ class YoutubeDLInput( Input ):
         #self.stream = purl
         #self.suri = purl
 
-        # Potentially add back playbin3?
-        #is_rtmp = self.suri.startswith('rtmp')
-        #playbin_element = 'playbin' if is_rtmp else 'playbin'
-
         allow_playbin3 = False
 
         if hasattr( self, 'suri' ) and allow_playbin3:
@@ -174,7 +171,10 @@ class YoutubeDLInput( Input ):
         self.playsink.set_property('audio-sink', fakesink)
 
     def create_video_elements(self):
-        bin_as_string = f'videoconvert ! videoscale ! capsfilter name=capsfilter ! queue ! {self.default_video_pipeline_string_end()}'
+        # bin_as_string = f'videoconvert ! videoscale ! capsfilter name=capsfilter ! queue ! {self.default_video_pipeline_string_end()}'
+
+        bin_as_string = 'videoconvert ! videoscale ! capsfilter name=capsfilter ! queue ! queue name=video_output_queue ! tee name=final_video_tee allow-not-linked=true final_video_tee. ! queue ! fakesink sync=true'
+
         bin = Gst.parse_bin_from_description( bin_as_string, True )
 
         self.capsfilter         = bin.get_by_name( 'capsfilter' )
@@ -186,16 +186,16 @@ class YoutubeDLInput( Input ):
         self.playsink.set_property( 'video-sink', bin )
 
     def create_audio_elements(self):
-        bin_as_string = f'audiorate tolerance=48000 ! audioconvert ! audioresample ! {config.default_audio_caps()} ! queue ! {self.default_audio_pipeline_string_end()}'
-        bin = Gst.parse_bin_from_description( bin_as_string, True )
+        # bin_as_string = f'audiorate tolerance=48000 ! audioconvert ! audioresample ! {config.default_audio_caps()} ! queue ! {self.default_audio_pipeline_string_end()}'
 
-        self.final_audio_tee    = bin.get_by_name( 'final_audio_tee' )
-        self.audio_output_queue = bin.get_by_name( 'audio_output_queue' )
+        bin_as_string = 'audiorate tolerance=48000 ! audioconvert ! audioresample ! audio/x-raw,channels=2,layout=interleaved,rate=48000,format=S16LE ! queue ! queue name=audio_output_queue ! tee name=final_audio_tee allow-not-linked=true final_audio_tee. ! queue ! fakesink sync=true'
+
+        bin = Gst.parse_bin_from_description( bin_as_string, True )
 
         self.playsink.set_property( 'audio-sink', bin )
 
-    #def has_video(self):
-    #    return False if self.disablevideo else config.enable_video()
+        self.final_audio_tee    = bin.get_by_name( 'final_audio_tee' )
+        self.audio_output_queue = bin.get_by_name( 'audio_output_queue' )
 
     def on_pipeline_start(self):
         '''
@@ -271,6 +271,8 @@ class YoutubeDLInput( Input ):
 
             if structure.has_field('rate'):
                 props[audioOrVideo + '_rate'] = structure.get_int('rate').value
+
+        print( props )
 
         return props
 
