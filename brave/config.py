@@ -87,7 +87,7 @@ def mixers():
 
 
 def default_audio_caps():
-    return 'audio/x-raw,channels=2,layout=interleaved,rate=41000,format=S16LE'
+    return 'audio/x-raw,channels=2,layout=interleaved,rate=44100,format=S16LE'
 
 
 def stun_server():
