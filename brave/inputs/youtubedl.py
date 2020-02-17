@@ -11,21 +11,22 @@ import youtube_dl
 # so we can call it and use it to get the url we want for a stream
 purl = "notset"
 channel_val = "not set yet..."
-class MyLogger(object):
+class MyLogger( object ):
     #purl = 'notset'
-    def debug(self, msg):
+    def debug( self, msg ):
         global purl
         if "https" in msg:
             #print(msg)
             purl = msg
         pass
 
-    def warning(self, msg):
+    def warning( self, msg ):
         #print(msg)
         pass
 
-    def error(self, msg):
-        print(msg)
+    def error( self, msg ):
+        print( msg )
+
 
 class YoutubeDLInput( Input ):
     '''
@@ -94,48 +95,48 @@ class YoutubeDLInput( Input ):
         # should do a check of the url by passing it through the stream link script
         # https://github.com/ytdl-org/youtube-dl/blob/master/README.md#embedding-youtube-dl
 
+        # YouTube Link
         self.suri = ''
 
-        def do_python_shit( self ):
-            const = where they fuck is my normally fitting clothes.
+        # Filter for just audio formats when video is disabled
+        ytFormats = 'best/best[height<=720][fps<=?30]/best[height<=720][fps<=?30]/best[height<=720][fps<=?30]/best[height<=720]'
 
-            # Filter for just audio formats when video is disabled
-            ytFormats = 'best/best[height<=720][fps<=?30]/best[height<=720][fps<=?30]/best[height<=720][fps<=?30]/best[height<=720]'
+        ydl_opts = {
+            'format'     : ytFormats,
+            'simulate'   : True,
+            'noplaylist' : True,
+            'forceurl'   : True,
+            'logger'     : MyLogger(),
+        }
 
-            ydl_opts = {
-                'format'     : ytFormats,
-                'simulate'   : True,
-                'noplaylist' : True,
-                'forceurl'   : True,
-                'logger'     : MyLogger(),
-            }
 
-            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-                ydl.download([self.uri])
-                meta = ydl.extract_info(self.uri, download=False)
+        with youtube_dl.YoutubeDL( ydl_opts ) as ydl:
 
-                global ytdl_url
-                ytdl_url = meta.get( 'url' )
-                self.stream = ytdl_url
-                self.suri = ytdl_url
+            # ydl.download( [ self.uri ] )
 
-                global channel_val
-                channel_val = meta.get( 'uploader' )
-                self.channel = channel_val
+            meta = ydl.extract_info( self.uri, download=False )
 
-                self.format      = meta.get( 'format' )
-                self.title       = meta.get( 'title' )
-                self.fps         = meta.get( 'fps' )
-                self.categories  = meta.get( 'categories' )
-                self.thumbnail   = meta.get( 'thumbnail' )
-                self.view_count  = meta.get( 'view_count' )
-                self.format_note = meta.get( 'format_note' )
-                self.protocol    = meta.get( 'protocol' )
+            global ytdl_url
 
-        do_python_shit( self )
+            ytdl_url = meta.get( 'url' )
+            self.stream = ytdl_url
+            self.suri = ytdl_url
 
-        # should then try to get the meta data out that we want like channel and description
-        # self.playbin.set_property('channel', 'test channel')
+            global channel_val
+            channel_val = meta.get( 'uploader' )
+            self.channel = channel_val
+
+            self.format      = meta.get( 'format' )
+            self.title       = meta.get( 'title' )
+            self.fps         = meta.get( 'fps' )
+            self.categories  = meta.get( 'categories' )
+            self.thumbnail   = meta.get( 'thumbnail' )
+            self.view_count  = meta.get( 'view_count' )
+            self.format_note = meta.get( 'format_note' )
+            self.protocol    = meta.get( 'protocol' )
+
+
+
 
         global purl
         self.stream = purl
@@ -178,8 +179,8 @@ class YoutubeDLInput( Input ):
     def create_video_elements(self):
         # bin_as_string = f'videoconvert ! videoscale ! capsfilter name=capsfilter ! queue ! {self.default_video_pipeline_string_end()}'
 
-        bin_as_string = 'videoconvert !  video/x-raw  ! '
-                        'videoscale ! capsfilter name=capsfilter ! queue ! '
+        bin_as_string = 'videoconvert !  video/x-raw  ! videoscale ! '
+                        'capsfilter name=capsfilter ! queue ! '
                         'queue name=video_output_queue ! '
                         'tee name=final_video_tee allow-not-linked=true '
                         'final_video_tee. ! queue ! fakesink sync=true'
