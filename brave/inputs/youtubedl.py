@@ -12,18 +12,13 @@ import youtube_dl
 purl = "notset"
 channel_val = "not set yet..."
 class MyLogger( object ):
-    #purl = 'notset'
     def debug( self, msg ):
         global purl
         if "https" in msg:
-            #print(msg)
             purl = msg
         pass
-
     def warning( self, msg ):
-        #print(msg)
         pass
-
     def error( self, msg ):
         print( msg )
 
@@ -87,7 +82,8 @@ class YoutubeDLInput( Input ):
             'protocol': { 'default': 'none' },
         }
 
-    def create_elements(self):
+
+    def create_elements( self ):
         # Playbin or playbin3 does all the hard work.
         # Playbin3 works better for continuous playback.
         # But it does not handle RTMP inputs as well.
@@ -136,8 +132,6 @@ class YoutubeDLInput( Input ):
             self.protocol    = meta.get( 'protocol' )
 
 
-
-
         global purl
         self.stream = purl
         self.suri = purl
@@ -168,13 +162,16 @@ class YoutubeDLInput( Input ):
         else:
             self._create_fake_audio()
 
+
     def _create_fake_video( self ):
-        fakesink = Gst.ElementFactory.make('fakesink')
-        self.playsink.set_property('video-sink', fakesink)
+        fakesink = Gst.ElementFactory.make( 'fakesink' )
+        self.playsink.set_property( 'video-sink', fakesink )
+
 
     def _create_fake_audio( self ):
-        fakesink = Gst.ElementFactory.make('fakesink')
-        self.playsink.set_property('audio-sink', fakesink)
+        fakesink = Gst.ElementFactory.make( 'fakesink' )
+        self.playsink.set_property( 'audio-sink', fakesink )
+
 
     def create_video_elements( self ):
         # bin_as_string = f'videoconvert ! videoscale ! capsfilter name=capsfilter ! queue ! {self.default_video_pipeline_string_end()}'
@@ -195,6 +192,7 @@ class YoutubeDLInput( Input ):
 
         self.playsink.set_property( 'video-sink', bin )
 
+
     def create_audio_elements( self ):
         # bin_as_string = f'audiorate tolerance=48000 ! audioconvert ! audioresample ! {config.default_audio_caps()} ! queue ! {self.default_audio_pipeline_string_end()}'
 
@@ -212,6 +210,7 @@ class YoutubeDLInput( Input ):
 
         self.playsink.set_property( 'audio-sink', bin )
 
+
     def on_pipeline_start( self ):
         '''
         Called when the stream starts
@@ -223,11 +222,12 @@ class YoutubeDLInput( Input ):
         # (as the position cannot be set until the pipeline is PAUSED/PLAYING):
         self._handle_position_seek()
 
+
     def _handle_position_seek( self ):
         '''
         If the user has provided a position to seek to, this method handles it.
         '''
-        if hasattr( self, 'position' ) and self.state in [Gst.State.PLAYING, Gst.State.PAUSED]:
+        if hasattr( self, 'position' ) and self.state in [ Gst.State.PLAYING, Gst.State.PAUSED ]:
             try:
                 new_position = float( self.position )
                 if self.pipeline.seek_simple( Gst.Format.TIME, Gst.SeekFlags.FLUSH, new_position ):
@@ -238,6 +238,7 @@ class YoutubeDLInput( Input ):
                 self.logger.warning( 'Invalid position %s provided' % self.position )
             delattr( self, 'position' )
 
+
     def get_input_cap_props( self ):
         '''
         Parses the caps that arrive from the input, and returns them.
@@ -245,85 +246,88 @@ class YoutubeDLInput( Input ):
         '''
         elements = {}
 
-        if hasattr(self, 'intervideosink'):
+        if hasattr( self, 'intervideosink' ):
             elements['video'] = self.intervideosink
 
-        if hasattr(self, 'interaudiosink'):
+        if hasattr( self, 'interaudiosink' ):
             elements['audio'] = self.interaudiosink
 
         props = {}
         for ( audioOrVideo, element ) in elements.items():
 
             if not element:
-                MyLogger.error('YT-dl missing element!')
+                MyLogger.error( 'YT-dl missing element!' )
                 return
 
-            caps = element.get_static_pad('sink').get_current_caps()
+            caps = element.get_static_pad( 'sink' ).get_current_caps()
             if not caps:
-                MyLogger.error('YT-dl missing caps!')
+                MyLogger.error( 'YT-dl missing caps!' )
                 return
 
             size = caps.get_size()
             if size == 0:
-                MyLogger.error('YT-dl caps size is 0!')
+                MyLogger.error( 'YT-dl caps size is 0!' )
                 return
 
-            structure = caps.get_structure(0)
+            structure = caps.get_structure( 0 )
             props[audioOrVideo + '_caps_string'] = structure.to_string()
 
-            if structure.has_field('framerate'):
-                framerate = structure.get_fraction('framerate')
+            if structure.has_field( 'framerate' ):
+                framerate = structure.get_fraction( 'framerate' )
                 props['framerate'] = framerate.value_numerator / framerate.value_denominator
 
-            if structure.has_field('height'):
-                props['height'] = structure.get_int('height').value
+            if structure.has_field( 'height' ):
+                props['height'] = structure.get_int( 'height' ).value
 
-            if structure.has_field('width'):
-                props['width'] = structure.get_int('width').value
+            if structure.has_field( 'width' ):
+                props['width'] = structure.get_int( 'width' ).value
 
-            if structure.has_field('channels'):
-                props[audioOrVideo + '_channels'] = structure.get_int('channels').value
+            if structure.has_field( 'channels' ):
+                props[audioOrVideo + '_channels'] = structure.get_int( 'channels' ).value
 
-            if structure.has_field('rate'):
-                props[audioOrVideo + '_rate'] = structure.get_int('rate').value
+            if structure.has_field( 'rate' ):
+                props[audioOrVideo + '_rate'] = structure.get_int( 'rate' ).value
 
         print( props )
 
         return props
 
-    def _can_move_to_playing_state(self):
+
+    def _can_move_to_playing_state ( self ):
         '''
         Blocks moving into the PLAYING state if buffering is happening
         '''
         buffering_stats = self.get_buffering_stats()
         if not buffering_stats or not buffering_stats.busy:
             return True
-        self.logger.debug('Buffering, so not moving to PLAYING')
+        self.logger.debug( 'Buffering, so not moving to PLAYING' )
         return False
 
-    def get_buffering_stats(self):
+
+    def get_buffering_stats ( self ):
         '''
         Returns an object with 'busy' (whether buffering is in progress)
         and 'percent' (the amount of buffering retrieved, 100=full buffer)
         '''
-        query_buffer = Gst.Query.new_buffering(Gst.Format.PERCENT)
-        result = self.pipeline.query(query_buffer) if hasattr(self, 'pipeline') else None
+        query_buffer = Gst.Query.new_buffering( Gst.Format.PERCENT )
+        result = self.pipeline.query( query_buffer ) if hasattr( self, 'pipeline' ) else None
         return query_buffer.parse_buffering_percent() if result else None
 
-    def summarise(self, for_config_file=False):
+
+    def summarise ( self, for_config_file=False ):
         '''
         Adds buffering stats to the summary
         '''
-        s = super().summarise(for_config_file)
+        s = super().summarise( for_config_file )
 
         if not for_config_file:
             buffering_stats = self.get_buffering_stats()
             if buffering_stats:
                 s['buffering_percent'] = buffering_stats.percent
-
         return s
 
-    def on_buffering(self, buffering_percent):
+
+    def on_buffering ( self, buffering_percent ):
         '''
         Called to report buffering.
         '''
@@ -333,15 +337,17 @@ class YoutubeDLInput( Input ):
         else:
             self.report_update_to_user()
 
-    def handle_updated_props(self):
+
+    def handle_updated_props ( self ):
         super().handle_updated_props()
         self._handle_position_seek()
-        if hasattr(self, 'buffer_duration'):
-            self.playbin.set_property('buffer-duration', self.buffer_duration)
-        if hasattr(self, 'volume'):
-            self.playbin.set_property('volume', self.volume)
+        if hasattr( self, 'buffer_duration' ):
+            self.playbin.set_property( 'buffer-duration', self.buffer_duration )
+        if hasattr( self, 'volume'):
+            self.playbin.set_property( 'volume', self.volume )
 
-    def __on_about_to_finish(self, playbin):
+
+    def __on_about_to_finish ( self, playbin ):
         if self.loop:
-            self.logger.debug('About to finish, looping')
-            playbin.set_property('uri', self.suri)
+            self.logger.debug( 'About to finish, looping' )
+            playbin.set_property( 'uri', self.suri )
