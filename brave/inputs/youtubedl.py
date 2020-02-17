@@ -196,14 +196,15 @@ class YoutubeDLInput( Input ):
     def create_audio_elements( self ):
         # bin_as_string = f'audiorate tolerance=48000 ! audioconvert ! audioresample ! {config.default_audio_caps()} ! queue ! {self.default_audio_pipeline_string_end()}'
 
-        bin_as_string = ( 'audioconvert ! audioresample ! '
-                          'audio/x-raw, channels=2, rate=41000 ! '
+        bin_as_string = ( 'audioconvert ! audiorate ! '
+                          'caps="audio/x-raw, channels=2, rate=41000" name=audio_capsfilter ! '
                           'queue name=audio_output_queue ! '
                           'tee name=final_audio_tee allow-not-linked=true '
                           'final_audio_tee. ! queue ! fakesink sync=true' )
 
         bin = Gst.parse_bin_from_description( bin_as_string, True )
 
+        self.audio_capsfilter   = bin.get_by_name( 'audio_capsfilter' )
         self.final_audio_tee    = bin.get_by_name( 'final_audio_tee' )
         self.audio_output_queue = bin.get_by_name( 'audio_output_queue' )
 
