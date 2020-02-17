@@ -136,9 +136,9 @@ class YoutubeDLInput( Input ):
         # should then try to get the meta data out that we want like channel and description
         # self.playbin.set_property('channel', 'test channel')
 
-        #global purl
-        #self.stream = purl
-        #self.suri = purl
+        global purl
+        self.stream = purl
+        self.suri = purl
 
         allow_playbin3 = False
 
