@@ -196,7 +196,7 @@ class YoutubeDLInput( Input ):
     def create_audio_elements( self ):
         # bin_as_string = f'audiorate tolerance=48000 ! audioconvert ! audioresample ! {config.default_audio_caps()} ! queue ! {self.default_audio_pipeline_string_end()}'
 
-        bin_as_string = ( 'audioconvert ! autoaudiosink ! '
+        bin_as_string = ( 'audioconvert ! audioresample ! '
                           'audio/x-raw, channels=2, rate=41000 ! '
                           'queue name=audio_output_queue ! '
                           'tee name=final_audio_tee allow-not-linked=true '
