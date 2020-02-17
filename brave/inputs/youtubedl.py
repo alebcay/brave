@@ -145,18 +145,18 @@ class YoutubeDLInput( Input ):
         allow_playbin3 = False
 
         if hasattr( self, 'suri' ) and allow_playbin3:
-            is_rtmp = self.suri.startswith('rtmp')
+            is_rtmp = self.suri.startswith( 'rtmp' )
             playbin_element = 'playbin' if is_rtmp else 'playbin3'
         else:
             playbin_element = 'playbin'
 
         self.create_pipeline_from_string( playbin_element )
 
-        self.playsink = self.pipeline.get_by_name('playsink')
+        self.playsink = self.pipeline.get_by_name( 'playsink' )
         self.playbin = self.playsink.parent
 
-        self.playbin.set_property('uri', self.suri)
-        self.playbin.connect('about-to-finish', self.__on_about_to_finish)
+        self.playbin.set_property( 'uri', self.suri )
+        self.playbin.connect( 'about-to-finish', self.__on_about_to_finish )
 
         if config.enable_video():
             self.create_video_elements()
@@ -176,7 +176,7 @@ class YoutubeDLInput( Input ):
         fakesink = Gst.ElementFactory.make('fakesink')
         self.playsink.set_property('audio-sink', fakesink)
 
-    def create_video_elements(self):
+    def create_video_elements( self ):
         # bin_as_string = f'videoconvert ! videoscale ! capsfilter name=capsfilter ! queue ! {self.default_video_pipeline_string_end()}'
 
         bin_as_string = ( 'videoconvert !  video/x-raw  ! videoscale ! '
@@ -195,7 +195,7 @@ class YoutubeDLInput( Input ):
 
         self.playsink.set_property( 'video-sink', bin )
 
-    def create_audio_elements(self):
+    def create_audio_elements( self ):
         # bin_as_string = f'audiorate tolerance=48000 ! audioconvert ! audioresample ! {config.default_audio_caps()} ! queue ! {self.default_audio_pipeline_string_end()}'
 
         bin_as_string = ( 'audiorate ! audioconvert ! audioresample ! '
@@ -212,7 +212,7 @@ class YoutubeDLInput( Input ):
 
         self.playsink.set_property( 'audio-sink', bin )
 
-    def on_pipeline_start(self):
+    def on_pipeline_start( self ):
         '''
         Called when the stream starts
         '''
@@ -223,7 +223,7 @@ class YoutubeDLInput( Input ):
         # (as the position cannot be set until the pipeline is PAUSED/PLAYING):
         self._handle_position_seek()
 
-    def _handle_position_seek(self):
+    def _handle_position_seek( self ):
         '''
         If the user has provided a position to seek to, this method handles it.
         '''
@@ -238,7 +238,7 @@ class YoutubeDLInput( Input ):
                 self.logger.warning( 'Invalid position %s provided' % self.position )
             delattr( self, 'position' )
 
-    def get_input_cap_props(self):
+    def get_input_cap_props( self ):
         '''
         Parses the caps that arrive from the input, and returns them.
         This allows the height/width/framerate/audio_rate to be retrieved.
