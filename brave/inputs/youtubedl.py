@@ -115,30 +115,33 @@ class YoutubeDLInput( Input ):
         }
 
         try:
-        with youtube_dl.YoutubeDL( ydl_opts ) as ydl:
+            with youtube_dl.YoutubeDL( ydl_opts ) as ydl:
 
-              global ytdl_url
+                global ytdl_url
 
-              ydl.download( [ self.uri ] )
+                ydl.download( [ self.uri ] )
 
-              meta = ydl.extract_info ( self.uri, download=False )
+                meta = ydl.extract_info ( self.uri, download=False )
 
-              ytdl_url = meta.get( 'url' )
-              self.stream = ytdl_url
-              self.suri = ytdl_url
+                ytdl_url    = meta.get( 'url' )
+                self.stream = ytdl_url
+                self.suri   = ytdl_url
 
-              global channel_val
-              channel_val = meta.get( 'uploader' )
-              self.channel = channel_val
+                global channel_val
+                channel_val = meta.get( 'uploader' )
+                self.channel = channel_val
 
-              self.format      = meta.get( 'format' )
-              self.title       = meta.get( 'title' )
-              self.fps         = meta.get( 'fps' )
-              self.categories  = meta.get( 'categories' )
-              self.thumbnail   = meta.get( 'thumbnail' )
-              self.view_count  = meta.get( 'view_count' )
-              self.format_note = meta.get( 'format_note' )
-              self.protocol    = meta.get( 'protocol' )
+                self.format      = meta.get( 'format' )
+                self.title       = meta.get( 'title' )
+                self.fps         = meta.get( 'fps' )
+                self.categories  = meta.get( 'categories' )
+                self.thumbnail   = meta.get( 'thumbnail' )
+                self.view_count  = meta.get( 'view_count' )
+                self.format_note = meta.get( 'format_note' )
+                self.protocol    = meta.get( 'protocol' )
+
+            print ( meta )
+
         except e:
             print ( e )
             pass
