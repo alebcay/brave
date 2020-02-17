@@ -88,6 +88,7 @@ inputsHandler._inputCardBody = (input) => {
   if (input.hasOwnProperty('audio_rate')) details.push('<div><strong>Audio rate:</strong> ' + input.audio_rate + '</div>');
   if (input.hasOwnProperty('volume')) details.push('<div><strong>Volume:</strong> ' + (100 * input.volume) + '&#37;</div>');
   if (input.hasOwnProperty('loop')) details.push('<div><strong>Loop:</strong> ' + (input.loop ? 'Yes' : 'No') + '</div>');
+  if (input.hasOwnProperty('Video')) details.push('<div><strong>Video:</strong> ' + (input.disableVideo ? 'Disabled' : 'Enabled') + '</div>');
   if (input.hasOwnProperty('input_volume')) details.push('<div><strong>Input volume:</strong> ' + input.input_volume + '</div>');
   if (input.hasOwnProperty('freq')) details.push('<div><strong>Frequency:</strong> ' + input.freq + 'Hz</div>');
   if (input.hasOwnProperty('pattern')) details.push('<div><strong>Pattern:</strong> ' + inputsHandler.patternTypes[input.pattern] + '</div>');
