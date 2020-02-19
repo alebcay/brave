@@ -1,4 +1,4 @@
-FROM ubuntu:18.10
+FROM ubuntu:19.10
 # FROM amd64/debian:stretch-slim
 
 ENV LC_ALL=C.UTF-8
@@ -15,6 +15,8 @@ RUN apt-get update && \
     cmake \
     libffi6 libffi-dev \
     gobject-introspection \
+    libgstreamer1.0-dev \
+    libgstreamer-plugins-base1.0-dev \
     gstreamer1.0-libav \
     gstreamer1.0-nice \
     gstreamer1.0-plugins-base \
