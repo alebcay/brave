@@ -28,12 +28,16 @@ RUN apt-get update && \
     python3-gi \
     python3-websockets \
     python3-psutil \
-    python3-uvloop
+    python3-uvloop \
+    cmake
 
 RUN pip3 install pipenv sanic
 
 COPY . /src
 WORKDIR /src
+
+RUN cd gst-WebRenderSrc && \
+    cmake .
 
 RUN pipenv install && \
     mkdir -p /usr/local/share/brave/output_images/
