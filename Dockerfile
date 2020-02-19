@@ -1,5 +1,5 @@
-# FROM ubuntu:18.10
-FROM amd64/debian:stretch-slim
+FROM ubuntu:18.10
+# FROM amd64/debian:stretch-slim
 
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
