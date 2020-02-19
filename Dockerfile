@@ -9,6 +9,10 @@ RUN apt-get update && \
     build-essential \
     gcc \
     git \
+    libtool \
+    automake \
+    make \
+    cmake \
     libffi6 libffi-dev \
     gobject-introspection \
     gstreamer1.0-libav \
@@ -30,8 +34,6 @@ RUN apt-get update && \
     python3-websockets \
     python3-psutil \
     python3-uvloop \
-    make \
-    cmake
 
 RUN pip3 install pipenv sanic
 
