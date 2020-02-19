@@ -4,8 +4,8 @@ FROM ubuntu:18.10
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
-RUN apt update && \
-    apt install -yq \
+RUN apt-get update && \
+    apt-get install -y \
     build-essential \
     gcc \
     git \
