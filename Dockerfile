@@ -33,7 +33,7 @@ RUN apt-get update && \
     python3-gi \
     python3-websockets \
     python3-psutil \
-    python3-uvloop \
+    python3-uvloop
 
 RUN pip3 install pipenv sanic
 
