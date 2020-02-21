@@ -47,6 +47,12 @@ RUN cd gst-WebRenderSrc && \
     CC=clang CXX=clang++ make -stdlib=g++ && \
     make install
 
+RUN git clone https://github.com/RidgeRun/gst-interpipe.git && \
+    cd gst-interpipe && \
+    ./autogen.sh --libdir /usr/lib/x86_64-linux-gnu/gstreamer-1.0/ && \
+    make && \
+    make install
+
 RUN pipenv install && \
     mkdir -p /usr/local/share/brave/output_images/
 
