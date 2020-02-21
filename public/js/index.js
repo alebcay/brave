@@ -449,7 +449,7 @@ function submitCreateOrEdit ( blockType, id, values ) {
     success: response => {
       const msg = isUpdate ?
         `Successfully updated ${blockType} ${id}` :
-        `Successfully created ${blockType} ${response.id}`;
+        `Successfully created ${blockType} ${response.id} ${values}`;
       showMessage ( msg, 'success' );
       updatePage();
     },
