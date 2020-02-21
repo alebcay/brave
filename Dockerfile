@@ -13,6 +13,7 @@ RUN apt-get update && \
     automake \
     make \
     cmake \
+    gtk-doc-tools \
     libffi6 libffi-dev \
     gobject-introspection \
     libgstreamer1.0-dev \
