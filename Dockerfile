@@ -43,7 +43,9 @@ COPY . /src
 WORKDIR /src
 
 RUN cd gst-WebRenderSrc && \
-    cmake .
+    cmake -DCMAKE_BUILD_TYPE=Release . && \
+    CC=clang CXX=clang++ make -stdlib=g++ && \
+    make install
 
 RUN pipenv install && \
     mkdir -p /usr/local/share/brave/output_images/
