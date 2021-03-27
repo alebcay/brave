@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM python:3.7
 
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
@@ -6,8 +6,9 @@ ENV LANG=C.UTF-8
 RUN apt-get update && \
     apt-get install -yq \
     build-essential \
+    cmake \
     gcc \
-    git \ 
+    git \
     libffi6 libffi-dev \
     gobject-introspection \
     gstreamer1.0-libav \
@@ -17,9 +18,12 @@ RUN apt-get update && \
     gstreamer1.0-plugins-bad \
     gstreamer1.0-plugins-ugly \
     gstreamer1.0-tools \
-    gir1.2-gst-plugins-bad-1.0 \ 
+    gir1.2-gst-plugins-bad-1.0 \
+    gtk-doc-tools \
     libcairo2-dev \
     libgirepository1.0-dev \
+    libgstreamer1.0-dev \
+    libgstreamer-plugins-base1.0-dev \
     pkg-config \
     python3-dev \
     python3-wheel \
@@ -30,7 +34,13 @@ RUN apt-get update && \
     python3-psutil \
     python3-uvloop
 
-RUN git clone --depth 1 https://github.com/bbc/brave.git && \
+RUN git clone --depth 1 https://github.com/RidgeRun/gst-interpipe.git && \
+    cd gst-interpipe && \
+    ./autogen.sh --libdir /usr/lib/x86_64-linux-gnu/gstreamer-1.0/ && \
+    make && \
+    make install
+
+RUN git clone --depth 1 https://github.com/alebcay/brave.git && \
     cd brave && \
     pip3 install pipenv sanic && \
     pipenv install --ignore-pipfile && \
