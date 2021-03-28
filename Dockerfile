@@ -43,11 +43,6 @@ RUN pip3 install pipenv sanic
 COPY . /src
 WORKDIR /src
 
-RUN cd gst-WebRenderSrc && \
-    cmake -DCMAKE_BUILD_TYPE=Release . && \
-    CC=clang CXX=clang++ make -stdlib=g++ && \
-    make install
-
 RUN git clone --depth 1 https://github.com/RidgeRun/gst-interpipe.git && \
     cd gst-interpipe && \
     ./autogen.sh --libdir /usr/lib/x86_64-linux-gnu/gstreamer-1.0/ && \
