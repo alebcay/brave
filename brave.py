@@ -3,18 +3,10 @@
 Runs Brave as a daemon with RestAPI interface
 '''
 
-import sys
-import threading
-import signal
-import argparse
-import brave.session
+import sys, threading, signal, argparse, brave.session, brave.api, brave.config, brave.exceptions
 from gi.repository import Gst
-assert sys.version_info >= (3, 6)
-import brave.api
-import brave.config
 from brave.helpers import run_on_master_thread_when_idle
-import brave.exceptions
-
+assert sys.version_info >= (3, 6)
 
 def setup_args():
     parser = argparse.ArgumentParser(description='Basic Remote AV Editor')
